@@ -1,0 +1,4 @@
+/* Your custom styles */
+input[type=text], input[type=password] {
+    font-size: 2rem;
+}

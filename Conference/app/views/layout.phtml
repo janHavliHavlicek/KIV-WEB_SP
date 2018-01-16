@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta http-equiv="x-ua-compatible" content="IE=edge">
+
+        <title>IV. MES Conference</title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- Bootstrap core CSS -->
+        <link href="../..//css/bootstrap.min.css" rel="stylesheet">
+        <!-- Material Design Bootstrap -->
+        <link href="../../css/mdb.min.css" rel="stylesheet">
+        <!-- Your custom styles (optional) -->
+        <link href="../../css/style.css" rel="stylesheet">
+        <!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"-->
+
+        <!-- SCRIPTS -->
+        <!-- JQuery -->
+        <script type="text/javascript" src="../../js/jquery.min.js" async></script>
+        <!-- Bootstrap tooltips -->
+        <script type="text/javascript" src="../../js/popper.min.js" async></script>
+        <!-- Bootstrap core JavaScript -->
+        <script type="text/javascript" src="../../js/bootstrap.min.js" async></script>
+        <!-- MDB core JavaScript -->
+        <script type="text/javascript" src="../../js/mdb.min.js" async></script>
+        <!--script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" async></script-->
+        <!--script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" async></script-->
+    </head>
+
+    <body>
+        <?php
+        if (isset($_SESSION["logged_user"])) {
+            $loggedUser = $_SESSION["logged_user"]["username"];
+        } else {
+            $loggedUser = " log in...";
+        }
+        ?>
+        <header>
+            <!--Navigation bar in header-->
+            <nav class="navbar navbar-expand-lg sticky-top navbar-dark teal">
+                <div class="container">
+                    <a class="navbar-brand" href="home">IV. MES Conference</a>
+
+                    <!--Menu right top button-->
+                    <button class="navbar-toggler waves-effect waves-light" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+
+                    <!--Right toggler-button collapse content-->
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <div class="navbar-nav">
+                            <a class="nav-item nav-link data-toggle=tab active" href="home">Home</a>
+                            <!--a class="nav-item nav-link data-toggle=tab" href="articles">Articles</a>
+                            <a class="nav-item nav-link data-toggle=tab" href="authors">Authors</a>
+                            <a class="nav-item nav-link data-toggle=tab" href="contact">Contact information</a-->
+                        </div>
+                    </div>
+
+                    <a href="user" class="text-white">
+                        <?php echo $loggedUser; ?>
+                    </a>
+
+                    <a href="login" id="navbar-static-login" class="nav-link waves-effect waves-light">
+                        <i class="fa fa-user-circle-o fa-lg" style="color:white"></i>
+                    </a>
+                    <form method="post">
+                        <button type="submit" name="signOff" class="btn btn-teal btn-block btn-rounded z-depth-1a">Sign off</button>
+                    </form>
+                </div>
+            </nav>
+        </header>
+
+        <article>
+            <?php /*echo '<pre>' . print_r($_SESSION, TRUE) . '</pre>';*/   ?>
+            <?php $this->controller->printView(); ?>
+        </article>
+
+        <footer class="page-footer teal center-on-small-only">
+            <!--Footer Links-->
+            <div class="container">
+                <div class="row">
+
+                    <!--First column-->
+                    <div>
+                        <h5 class="title text-center">IV. MES Conference</h5>
+                        <p>Organized by Company <strong>MEadS</strong>. MES informational-educative conference. Its purposes are to world-wide spread the knowledge of industrial Manufacturing Execution System and to gather and most importly share new experiences every year.</p>
+                    </div>
+                    <!--/.First column-->
+                </div>
+            </div>
+            <!--/.Footer Links-->
+
+            <!--Copyright-->
+            <div class="footer-copyright">
+                <div class="container-fluid">
+                    © 2017 Copyright
+                </div>
+            </div>
+            <!--/.Copyright-->
+        </footer>
+    </body>
+</html>

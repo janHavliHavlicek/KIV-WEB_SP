@@ -1,0 +1,70 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-5 mb-4">
+            <section>
+
+                <!--Form without header-->
+                <div class="card text-center">
+
+                    <div class="card-body mx-4">
+
+                        <!--Header-->
+                        <div class="text-center">
+                            <h3 class="dark-grey-text mb-5"><strong>Sign up</strong></h3>
+                        </div>
+
+                        <form method="post">
+                            <!--Body-->
+                            <div class="md-form pb-3  mb-3">
+                                <input type="text" id="Form-email1" class="form-control" required="required" name="username" value="<?php if(isset($_POST['username'])) echo(htmlspecialchars($_POST['username'])); ?>">
+                                <label for="Form-email1">Insert your USERNAME</label>
+                            </div>
+
+                            <div class="md-form mb-3">
+                                <input type="password" id="Form-pass1" class="form-control" required="required" name="password" value="<?php if(isset($_POST['password'])) echo(htmlspecialchars($_POST['password'])); ?>">
+                                <label for="Form-pass1">Insert your PASSWORD</label>
+                            </div>
+
+                            <div class="md-form pb-3 mb-3">
+                                <input type="password" id="Form-pass1" class="form-control" required="required" name="passwordVer" value="<?php if(isset($_POST['passwordVer'])) echo(htmlspecialchars($_POST['passwordVer'])); ?>">
+                                <label for="Form-pass1">Verify your PASSWORD</label>
+                            </div>
+
+                            <div class="md-form mb-3">
+                                <input type="text" id="Form-pass1" class="form-control" required="required" name="mail" value="<?php if(isset($_POST['mail'])) echo(htmlspecialchars($_POST['mail'])); ?>">
+                                <label for="Form-pass1">Insert your e-mail</label>
+                            </div>
+
+                            <div class="text-center mb-3">
+                                <button type="submit" class="btn btn-teal btn-block btn-rounded z-depth-1a">Sign up</button>
+                            </div>
+                            <p class="dark-grey-text text-right d-flex justify-content-center mb-3 pt-2"> or Sign up with:</p>
+
+                            <div class="row my-3 d-flex justify-content-center">
+                                <!--Facebook-->
+                                <button type="button" class="btn btn-teal btn-rounded mr-md-3 z-depth-1a">
+                                    <i class="fa fa-facebook white-text text-center"></i>
+                                </button>
+                                <!--Twitter-->
+                                <button type="button" class="btn btn-teal btn-rounded mr-md-3 z-depth-1a">
+                                    <i class="fa fa-twitter white-text"></i>
+                                </button>
+                                <!--Google +-->
+                                <button type="button" class="btn btn-teal btn-rounded z-depth-1a">
+                                    <i class="fa fa-google-plus white-text"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!--Footer-->
+                    <div class="modal-footer mx-5 pt-3 mb-1">
+                        <p class="font-small grey-text d-flex justify-content-end">Already a member? <a href="login" class="blue-text ml-1"> Sign in!</a></p>
+                    </div>
+
+                </div>
+                <!--/Form without header-->
+            </section>
+        </div>
+    </div>
+</div>  
