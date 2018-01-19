@@ -206,8 +206,11 @@ class UsersAdministrationController extends Controller
             $articles = new Articles($db);
             $this->downloadArticle($articles->selectArticle($id)['pdf_url']);
         }
-        
-
+        else if(($id = $this->catchKeywordsId($input, "reviews", 0)) != false)
+        {
+            $_SESSION['reviews']['articleId'] = $id;
+            $this->route('reviews');
+        }
     }
 
     private function updateArticle($articles, $reviews, $articleId, $reviewer1, $reviewer2, $reviewer3, $newStatus)
