@@ -1,8 +1,14 @@
 <?php 
 class Articles
 {
+    /*
+    *   instance of database connection with basic queries
+    */
     private $database;
         
+    /*
+    *   constructor that gets the database instance
+    */
     public function __construct($db)
     {
         $this->database = $db;
@@ -69,6 +75,22 @@ class Articles
     public function GetAllNotAccepted()
     {
         $res = $this->database->select("article", "status", "accepted", true, 'NOT ');
+        
+        for($i = 0; $i < count($res); $i++)
+        {
+            $author = $this->database->select("user", "user_id", $res[$i]['author'], false, '')['username'];
+            $res[$i]['author'] = $author;
+            
+            $reviews = $this->database->select("review", "article", $res[$i]["article_id"], true, '');
+            $res[$i]['reviews'] = $reviews;
+        }
+        
+        return $res;
+    }
+    
+    public function GetAllAccepted()
+    {
+        $res = $this->database->select("article", "status", "accepted", true, '');
         
         for($i = 0; $i < count($res); $i++)
         {

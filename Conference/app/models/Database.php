@@ -32,9 +32,9 @@ class Database
         $columns = implode(",", $arrayColumns);
         $values = implode(",", $arrayValues);
 
-        $stmt = $this->database->prepare("INSERT INTO " . $table . "(" . $columns . ") VALUES(" . $values . ")");
+        $stmt = $this->database->prepare("INSERT INTO ? (?) VALUES(?)");
 
-        $stmt->execute();
+        $stmt->execute(array($table, $columns, $values));
     }
 
     //BIND!
@@ -64,18 +64,18 @@ class Database
 
             //echo "SELECT * FROM " . $table . " WHERE " . $not . $newValues;
 
-            $stmt = $this->database->prepare("SELECT * FROM " . $table . " WHERE " . $not . $newValues);
-            $stmt->execute();
+            $stmt = $this->database->prepare("SELECT * FROM ? WHERE ??");
+            $stmt->execute(array($table, $not, $newValues));
             if($fetchAll)
                 $res = $stmt->fetchAll();
             else
                 $res = $stmt->fetch();
         }
         else
-        {
-            $stmt = $this->database->prepare("SELECT * FROM " . $table . " WHERE " . $not . $colWhere . " = '" . $valWhere . "'");
+        {          
+            $stmt = $this->database->prepare("SELECT * FROM ? WHERE ? = '?'");
 
-            $stmt->execute();
+            $stmt->execute(array($table, $not, $colWhere, $valWhere));
 
             if($fetchAll)
                 $res = $stmt->fetchAll();
@@ -103,9 +103,9 @@ class Database
 
             $newValues = implode("AND", $newValuesArr);
 
-            $stmt = $this->database->prepare("SELECT AVG(" . $colAVG . ") FROM " . $table . " WHERE " . $newValues);
+            $stmt = $this->database->prepare("SELECT AVG(?) FROM ? WHERE ?");
 
-            $stmt->execute();
+            $stmt->execute($colAVG, $table, $newValues);
             $res = $stmt->fetch();
         }
         else
@@ -169,7 +169,7 @@ class Database
 
         //echo "UPDATE " . $table . " SET " . $newValues . " WHERE " . $colWhere . " = '" . $valWhere . "'";
         //exit();
-        
+
         $stmt = $this->database->prepare("UPDATE " . $table . " SET " . $newValues . " WHERE " . $colWhere . " = '" . $valWhere . "'");
 
         $stmt->execute();
