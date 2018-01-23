@@ -26,7 +26,7 @@ class HomeController extends Controller
 
     private function chooseAction($input)
     {
-        
+            //echo "<pre>". print_r($input) ."</pre>";
         if(($id = $this->catchKeywordsId($input, "downloadArticle")) != false)
         {
             $this->downloadArticle($this->articles->selectArticle($id)['pdf_url']);
@@ -85,7 +85,7 @@ class HomeController extends Controller
                         </div>
                     </div>";
 
-            //echo "NOT EMPTY";         onclick=\"showFirstAlert()\" 
+            //echo "NOT EMPTY";
         }
 
         return $res;
@@ -110,13 +110,21 @@ class HomeController extends Controller
     {
         if(isset(array_keys($input)[0]))
         {
+            //echo "<pre>". print_r($input) . "</pre>";
+            //echo $keyword. "====";
+            
             $callerName = array_keys($input)[0];
             $pos = strpos($callerName, $keyword);
 
+            //echo $callerName. "====" . $pos . "_________";
+            
             if($pos !== false)
             {
                 $id = substr($callerName, strpos($callerName, "_") +1);
 
+                //echo $id;
+                //exit();
+                
                 return $id;
             }else
             {

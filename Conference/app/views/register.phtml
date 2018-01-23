@@ -31,12 +31,12 @@
                             </div>
 
                             <div class="md-form mb-3">
-                                <input type="text" id="Form-pass1" class="form-control" required="required" name="mail" value="<?php if(isset($_POST['mail'])) echo(htmlspecialchars($_POST['mail'])); ?>">
+                                <input type="text" id="e-mail" class="form-control" required="required" name="mail" value="<?php if(isset($_POST['mail'])) echo(htmlspecialchars($_POST['mail'])); ?>">
                                 <label for="Form-pass1">Insert your e-mail</label>
                             </div>
 
                             <div class="text-center mb-3">
-                                <button type="submit" class="btn btn-teal btn-block btn-rounded z-depth-1a">Sign up</button>
+                                <button type="submit" onsubmit="validateEmail(document.getElementById('e-mail').value)"  class="btn btn-teal btn-block btn-rounded z-depth-1a">Sign up</button>
                             </div>
                             <p class="dark-grey-text text-right d-flex justify-content-center mb-3 pt-2"> or Sign up with:</p>
 

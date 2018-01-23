@@ -32,8 +32,12 @@ class Database
         $columns = implode(",", $arrayColumns);
         $values = implode(",", $arrayValues);
 
-        $stmt = $this->database->prepare("INSERT INTO " . $table . "(" . $columns . ") VALUES(" . $values . ")");
+        $stmt = $this->database->prepare("INSERT INTO ? (?) VALUES(?)");
 
+        $stmt->bindValue(1, $table);
+        $stmt->bindValue(2, $columns);
+        $stmt->bindValue(3, $values);
+        
         $stmt->execute();
     }
 
@@ -46,41 +50,73 @@ class Database
 
         if(is_array($colWhere) == true)
         {
-            foreach($valWhere as &$val)
+            /*foreach($valWhere as &$val)
             {
                 if(!(strpos($val, 'NULL') !== false))
-                    $val = "'" . $val . "'";
-            }
+                    $val = "`" . $val . "`";
+            }*/
+            /*
+            foreach($colWhere as &$col)
+            {
+                if(!(strpos($col, 'NULL') !== false))
+                    $col = "`" . $col . "`";
+            }*/
 
             for($i = 0; $i < count($colWhere); $i++)
             {
                 if(strpos($valWhere[$i], 'NULL') !== false)
-                    $newValuesArr[$i] = $colWhere[$i] . " IS " . $valWhere[$i];
+                    $newValuesArr[$i] = "`$colWhere[$i]`  IS  $valWhere[$i]";
                 else
-                    $newValuesArr[$i] = $colWhere[$i] . " = " . $valWhere[$i];
+                    $newValuesArr[$i] = "`$colWhere[$i]`  =  $valWhere[$i]";
             }
 
             $newValues = implode(" AND ", $newValuesArr);
 
             //echo "SELECT * FROM " . $table . " WHERE " . $not . $newValues;
 
-            $stmt = $this->database->prepare("SELECT * FROM " . $table . " WHERE " . $not . $newValues);
+            $stmt = $this->database->prepare("SELECT * FROM ? WHERE ? ?");
+            
+            
+            $stmt->bindValue(1, $table);
+            $stmt->bindValue(2, $not);
+            $stmt->bindValue(3, $newValues);
+            
             $stmt->execute();
+            
+        $errors = $stmt->errorInfo();
+            
+            echo "<pre>SELECT * FROM ? WHERE ? ?</pre>";
+            echo "<pre>$table, $not, $newValues</pre>";
+            echo print_r($errors);
+            exit();
+            
             if($fetchAll)
-                $res = $stmt->fetchAll();
+                $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
             else
-                $res = $stmt->fetch();
+                $res = $stmt->fetch(PDO::FETCH_ASSOC);
         }
         else
-        {
-            $stmt = $this->database->prepare("SELECT * FROM " . $table . " WHERE " . $not . $colWhere . " = '" . $valWhere . "'");
+        {          
+            $stmt = $this->database->prepare("SELECT * FROM ? WHERE ? ?");
 
+            
+            $stmt->bindValue(1, $table);
+            $stmt->bindValue(2, $not);
+            $stmt->bindValue(3, "`$colWhere`  =  $valWhere");
+            
             $stmt->execute();
-
+            
+        $errors = $stmt->errorInfo();
+            
+            echo "<pre>SELECT * FROM ? WHERE ? ?</pre>";
+            echo "<pre>$table, $not, `$colWhere`  =  $valWhere</pre>";
+            echo print_r($errors);
+            exit();
+            
             if($fetchAll)
-                $res = $stmt->fetchAll();
+                $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
             else
-                $res = $stmt->fetch();
+                $res = $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
         return $res;
@@ -103,17 +139,17 @@ class Database
 
             $newValues = implode("AND", $newValuesArr);
 
-            $stmt = $this->database->prepare("SELECT AVG(" . $colAVG . ") FROM " . $table . " WHERE " . $newValues);
+            $stmt = $this->database->prepare("SELECT AVG(?) FROM ? WHERE ?");
 
-            $stmt->execute();
-            $res = $stmt->fetch();
+            $stmt->execute(array($colAVG, $table, $newValues));
+            $res = $stmt->fetch(PDO::FETCH_ASSOC);
         }
         else
         {
-            $stmt = $this->database->prepare("SELECT AVG(" . $colAVG . ") FROM " . $table . " WHERE " . $colWhere . " = '" . $valWhere . "'");
+            $stmt = $this->database->prepare("SELECT AVG(?) FROM ? WHERE ? = '?'");
 
-            $stmt->execute();
-            $res = $stmt->fetch();
+            $stmt->execute(array($colAVG, $table, $colWhere, $valWhere));
+            $res = $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
         return $res;
@@ -132,18 +168,18 @@ class Database
         $row = $this->select($table, $column, $value, false, '');
         $idKey = key($row);
         $id = $row[$idKey];
-            
-        $stmt = $this->database->prepare("DELETE FROM " . $table . " WHERE " . $idKey . " = '" . $id . "'");
 
-        $stmt->execute();
+        $stmt = $this->database->prepare("DELETE FROM ? WHERE ? = '?'");
+
+        $stmt->execute(array($table, $idKey, $id));
     }
 
     public function getTable($table)
     {
-        $stmt = $this->database->prepare("SELECT * FROM " . $table);
+        $stmt = $this->database->prepare("SELECT * FROM ?");
 
-        $stmt->execute();
-        $res = $stmt->fetchAll();
+        $stmt->execute(array($table));
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $res;
     }
@@ -169,10 +205,10 @@ class Database
 
         //echo "UPDATE " . $table . " SET " . $newValues . " WHERE " . $colWhere . " = '" . $valWhere . "'";
         //exit();
-        
-        $stmt = $this->database->prepare("UPDATE " . $table . " SET " . $newValues . " WHERE " . $colWhere . " = '" . $valWhere . "'");
 
-        $stmt->execute();
+        $stmt = $this->database->prepare("UPDATE ? SET ? WHERE ? = '?'");
+
+        $stmt->execute(array($table, $newValues, $colWhere, $valWhere));
     }
 }
 ?>
