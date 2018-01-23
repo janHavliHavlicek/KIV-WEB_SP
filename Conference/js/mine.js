@@ -11,3 +11,8 @@ function validateEmail(email)
         return true;
     }
 }
+
+function alert()
+{
+        alert("NOT A VALID E-MAIL ADDRESS!");
+}
