@@ -19,7 +19,7 @@ class LoginController extends Controller
             }else
             {
                 $_SESSION["logged_user"] = null;
-                $_SESSION["logged_user"] = 'Log in...';
+                $_SESSION["logged_user"]["username"] = 'Log in...';
                 $this->view = 'login';
             }
 

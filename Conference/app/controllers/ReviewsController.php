@@ -53,7 +53,7 @@ class ReviewsController extends Controller
             $this->data['reviews'] = $this->generateTable($reviews);
         }else
         {
-            $this->data['reviews'] = "<h3>No more articles to review...</h3>";
+            $this->data['reviews'] = "<h3>No reviews added yet...</h3>";
         }
     }
 

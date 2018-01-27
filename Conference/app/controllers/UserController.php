@@ -26,6 +26,8 @@ class UserController extends Controller
             case 'administrator':
                 $this->route('usersAdministration');
                 break;
+            default:
+                $this->route('login');
         }
     }
 

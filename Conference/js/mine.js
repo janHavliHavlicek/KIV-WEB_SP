@@ -13,4 +13,3 @@ function validateEmail(email)
 }
 
 
-https://www.itnetwork.cz/javascript/zaklady/javascript-tutorial-dom-a-udalosti

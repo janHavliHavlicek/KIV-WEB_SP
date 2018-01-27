@@ -2,14 +2,16 @@
 class UsersAdministrationController extends Controller
 {
     private $usersDb;
+    private $articles;
+    private $reviews;
     public function process($params)
     {
         $db = new Database("localhost", "conference");
-        $users = new Users($db);
-        $articles = new Articles($db);
-
-        $this->usersDb = $users;
-        $this->init($users, $articles, $_SESSION['logged_user']);
+        $this->usersDb = new Users($db);
+        $this->articles = new Articles($db);
+        $this->reviews = new Reviews($db);
+        
+        $this->init($_SESSION['logged_user']);
 
         $this->chooseAction($db, $_POST);
 
@@ -19,18 +21,18 @@ class UsersAdministrationController extends Controller
         $this->view = 'usersAdministration';
     }
 
-    private function init($users, $articles, $user)
+    private function init($user)
     {
-        $usersArray = $users->getAllUsers();
+        $usersArray = $this->usersDb->getAllUsers();
         $this->data['userTableRows'] = $this->generateTable($usersArray, 'user');
-        $this->data['reviewsTableRows'] = $this->articlesToReview($articles);
+        $this->data['reviewsTableRows'] = $this->articlesToReview($this->articles);
 
         $this->data['user'] = $user;
     }
 
-    private function articlesToReview($articles)
+    private function articlesToReview()
     {
-        $reviews = $articles->GetAllNotAccepted();
+        $reviews = $this->articles->GetAllNotAccepted();
         return $this->generateTable($reviews, 'review');
     }
 
@@ -116,10 +118,7 @@ class UsersAdministrationController extends Controller
 
         $isSelected = false;
 
-        $usersDb = new Users(new Database("localhost", "conference"));
-        $reviews = new Reviews(new Database("localhost", "conference"));
-
-        $reviewers = $usersDb->getReviewers();
+        $reviewers = $this->usersDb->getReviewers();
         $res = "<select name=\"select_" . $revNum . "_" . $order . "\" class=\"mdb-select colorful-select dropdown-primary\">" . "<option value=\"Choose a Reviewer\">Choose a Reviewer</option>";
 
         //echo '<pre>' .print_r($reviewers, TRUE).'</pre>';
@@ -127,7 +126,7 @@ class UsersAdministrationController extends Controller
         foreach($reviewers as $rev)
         {
             //echo '<pre>' .print_r($rev, TRUE).'-----------</pre>';
-            if($this->isReviewerSelectedAlready($articleId, $rev['username']) == true || $reviews->isReviewerAssignet($rev['user_id'], $articleId) == false || $isSelected == true)
+            if($this->isReviewerSelectedAlready($articleId, $rev['username']) == true || $this->reviews->isReviewerAssignet($rev['user_id'], $articleId) == false || $isSelected == true)
             {
                 $res .= "<option value=\"" . $rev['username'] . "\">" . $rev['username'] . "</option>";
             }else
@@ -160,19 +159,27 @@ class UsersAdministrationController extends Controller
 
     private function generateUserTableRow($array)
     {
+        if($array['blocked'] == 0)
+            $blockedIcon = "fa-ban";
+        else
+            $blockedIcon = "fa-check-circle";
+            
         return  "<form method=\"post\">" .
             "<td>" . $array['username'] . "</td>" .
             "<td>" . $array['status'] . "</td>" .
             "<td>" . $array['mail'] . "</td>" .
             "<td>" . $array['registered']. "</td>" .
             "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"deleteUser_". $array['user_id'] ."\">
-                <i class=\"fa fa-remove  fa-2x \" ></i>
+                <i class=\"fa fa-remove  fa-lg \" ></i>
+            </button></td>" .
+            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"blockUser_". $array['user_id'] ."\">
+                <i class=\"fa $blockedIcon fa-lg \" ></i>
             </button></td>" .
             "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"promoteUser_". $array['user_id'] ."\">
-                <i class=\"fa fa-arrow-circle-o-up fa-2x \"></i>
+                <i class=\"fa fa-arrow-circle-o-up fa-lg \"></i>
             </button></td>" .
             "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"neglectUser_". $array['user_id'] ."\">
-                <i class=\"fa fa-arrow-circle-o-down fa-2x \"></i>
+                <i class=\"fa fa-arrow-circle-o-down fa-lg \"></i>
             </button></td>" .
             "</form>";
     }
@@ -183,30 +190,32 @@ class UsersAdministrationController extends Controller
         
         if(($id = $this->catchKeywordsId($input, "updateArticle", 4)) != false)
         {
-            $articles = new Articles($db);
-            $reviews = new Reviews($db);
-            $this->updateArticle($articles, $reviews, $id, $_POST["select_" .$id. "_1"], $_POST["select_" .$id. "_2"], $_POST["select_" .$id. "_3"], $_POST['selectStatus_' . $id]);
+            $this->updateArticle($id, $_POST["select_" .$id. "_1"], $_POST["select_" .$id. "_2"], $_POST["select_" .$id. "_3"], $_POST['selectStatus_' . $id]);
             $this->route('usersAdministration');
         }
         else if(($id = $this->catchKeywordsId($input, "deleteUser", 0)) != false)
         {
-            $db->delete("user", "user_id", $id);
+            $this->usersDb->deleteById($id);
+            $this->route('usersAdministration');
+        }
+        else if(($id = $this->catchKeywordsId($input, "blockUser", 0)) != false)
+        {
+            $this->usersDb->block($id);
             $this->route('usersAdministration');
         }
         else if(($id = $this->catchKeywordsId($input, "promoteUser", 0)) != false)
         {
-            $this->promote($db, $id);
+            $this->users->promote($db, $id);
             $this->route('usersAdministration');
         }
         else if(($id = $this->catchKeywordsId($input, "neglectUser", 0)) != false)
         {
-            $this->neglect($db, $id);
+            $this->users->neglect($db, $id);
             $this->route('usersAdministration');
         }
         else if(($id = $this->catchKeywordsId($input, "downloadArticle", 0)) != false)
         {
-            $articles = new Articles($db);
-            $this->downloadArticle($articles->selectArticle($id)['pdf_url']);
+            $this->downloadArticle($this->articles->selectArticle($id)['pdf_url']);
         }
         else if(($id = $this->catchKeywordsId($input, "reviews", 4)) != false)
         {
@@ -215,34 +224,35 @@ class UsersAdministrationController extends Controller
         }
     }
 
-    private function updateArticle($articles, $reviews, $articleId, $reviewer1, $reviewer2, $reviewer3, $newStatus)
+    private function updateArticle($articleId, $reviewer1, $reviewer2, $reviewer3, $newStatus)
     {
         //echo '<pre>'. "$articleId, $reviewer1, $reviewer2, $reviewer3, $newStatus" .'________________</pre>';
 
-        $actualReviews = $reviews->getReviewsBy('article', $articleId);
+        $actualReviews = $this->reviews->getReviewsBy('article', $articleId);
 
         //echo '<pre>'. print_r($actualReviewers, TRUE) .'</pre>';
 
         if(empty($reviewer1) == false)
         {
-            $this->addReviewer($reviewer1, $reviewer2, $reviewer3, $actualReviews, $reviews, $articleId);
+            $this->addReviewer($reviewer1, $reviewer2, $reviewer3, $actualReviews, $articleId);
         }
         if(empty($reviewer2) == false)
         {
-            $this->addReviewer($reviewer2, $reviewer1, $reviewer3, $actualReviews, $reviews, $articleId);
+            $this->addReviewer($reviewer2, $reviewer1, $reviewer3, $actualReviews, $articleId);
         }
         if(empty($reviewer3) == false)
         {
-            $this->addReviewer($reviewer3, $reviewer1, $reviewer2, $actualReviews, $reviews, $articleId);
+            $this->addReviewer($reviewer3, $reviewer1, $reviewer2, $actualReviews, $articleId);
         }
         if(empty($newStatus) == false)
         {
-            $articles->updateStatus($articleId, $newStatus);
+            $this->articles->updateStatus($articleId, $newStatus);
         }
     }
 
-    private function addReviewer($reviewer, $reviewer2, $reviewer3, $actualReviews, $reviews, $articleId)
+    private function addReviewer($reviewer, $reviewer2, $reviewer3, $actualReviews, $articleId)
     {
+        $reviews = $this->reviews;
         if($reviews->isReviewerPresent($reviewer, $actualReviews) == false)
         {
             if($reviews->isReviewFree($articleId) == true && $reviewer != 'Choose a Reviewer')
@@ -298,46 +308,6 @@ class UsersAdministrationController extends Controller
                 return false;
             }
         }
-    }
-
-    private function promote($db, $userId)
-    {
-        $user = $db->select("user", "*", "user_id", $userId, false, '');
-        $toWrite = "author";
-        switch ($user['status'])
-        {
-            case "author":
-                $toWrite = "reviewer";
-                break;
-            case "reviewer":
-                $toWrite = "administrator";
-                break;
-            case "administrator":
-                $toWrite = "administrator";
-                break;
-        }
-
-        $db->update("user", "user_id", $userId, array ('status'), array($toWrite));
-    }
-
-    private function neglect($db, $userId)
-    {
-        $user = $db->select("user", "*", "user_id", $userId, false, '');
-        $toWrite = "author";
-        switch ($user['status'])
-        {
-            case "author":
-                $toWrite = "author";
-                break;
-            case "reviewer":
-                $toWrite = "author";
-                break;
-            case "administrator":
-                $toWrite = "reviewer";
-                break;
-        }
-
-        $db->update("user", "user_id", $userId, array ('status'), array($toWrite));
     }
 
     private function downloadArticle($url)
