@@ -77,10 +77,10 @@ class HomeController extends Controller
             $res = "<div class=\"col-lg-4 col-md-12 .mb-4\"> 
                         <div class=\"card\">
                             <div class=\"card-body\">
-                                <h4 class=\"card-title\">". $article['title']. "</h4>
-                                <p class=\"card-text\"><strong>Author:</strong> ". $article['author'] ."</p>
-                                <p class=\"card-text\"><strong>Description:</strong>". $article['description'] ."</p>
-                                <form method=\"POST\"><button type=\"submit\" class=\"btn btn-teal btn-block px-3\" aria-hidden=\"true\" name=\"downloadArticle_". $article['article_id'] ."\">READ!</button></form>
+                                <h4 class=\"card-title\">". htmlspecialchars($article['title']). "</h4>
+                                <p class=\"card-text\"><strong>Author:</strong> ". htmlspecialchars($article['author']) ."</p>
+                                <p class=\"card-text\"><strong>Description:</strong>". htmlspecialchars($article['description']) ."</p>
+                                <form method=\"POST\"><button type=\"submit\" class=\"btn btn-teal btn-block px-3\" aria-hidden=\"true\" name=\"downloadArticle_". htmlspecialchars($article['article_id']) ."\">READ!</button></form>
                             </div>
                         </div>
                     </div>";

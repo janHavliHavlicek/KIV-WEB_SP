@@ -59,18 +59,18 @@ class UsersAdministrationController extends Controller
         $_SESSION['selectedReviewers_' .$array['article_id']] = array();
 
         $res = "<form method=\"post\">" .
-            "<td>" . "<button type=\"submit\" class=\"btn btn-teal btn-block px-3\" aria-hidden=\"true\" name=\"downloadArticle_". $array['article_id'] ."\">".
-            $array['title'] ."</button></td>" .
-            "<td>" . $array['author'] . "</td>".
-            "<td>" . $array['status'] . "</td>" .
+            "<td>" . "<button type=\"submit\" class=\"btn btn-teal btn-block px-3\" aria-hidden=\"true\" name=\"downloadArticle_". htmlspecialchars($array['article_id']) ."\">".
+            htmlspecialchars($array['title']) ."</button></td>" .
+            "<td>" . htmlspecialchars($array['author']) . "</td>".
+            "<td>" . htmlspecialchars($array['status']) . "</td>" .
             "<td>" .$this->generateReviewersSelect($array['article_id'], 1, $array['article_id']) . "</td>" .
             "<td>" .$this->generateReviewersSelect($array['article_id'], 2, $array['article_id']) . "</td>" .
             "<td>" .$this->generateReviewersSelect($array['article_id'], 3, $array['article_id']) . "</td>" .
             "<td>" .$this->generateStatusSelect($array) . "</td>" .
-            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"reviews_". $array['article_id'] ."\">
+            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"reviews_". htmlspecialchars($array['article_id']) ."\">
                 <i class=\"fa fa-comments  fa-2x \" ></i>
             </button></td>" .
-            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"updateArticle_". $array['article_id'] ."\"> 
+            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"updateArticle_". htmlspecialchars($array['article_id']) ."\"> 
                 <i class=\"fa fa-paper-plane-o  fa-2x \" ></i>
             </button></td>" .
             "</form>";
@@ -126,14 +126,14 @@ class UsersAdministrationController extends Controller
         foreach($reviewers as $rev)
         {
             //echo '<pre>' .print_r($rev, TRUE).'-----------</pre>';
-            if($this->isReviewerSelectedAlready($articleId, $rev['username']) == true || $this->reviews->isReviewerAssignet($rev['user_id'], $articleId) == false || $isSelected == true)
+            if($this->isReviewerSelectedAlready($articleId, htmlspecialchars($rev['username']) == true || $this->reviews->isReviewerAssignet(htmlspecialchars($rev['user_id']), $articleId) == false || $isSelected == true)
             {
-                $res .= "<option value=\"" . $rev['username'] . "\">" . $rev['username'] . "</option>";
+                $res .= "<option value=\"" . htmlspecialchars($rev['username']) . "\">" . htmlspecialchars($rev['username']) . "</option>";
             }else
             {       
                 //echo '<pre> hahaha' .print_r($rev, TRUE).'</pre>';
-                $res .= "<option selected=\"selected\" value=\"" . $rev['username'] . "\">" . $rev['username'] . "</option>";
-                array_push($_SESSION['selectedReviewers_' .$articleId], $rev['username']);
+                $res .= "<option selected=\"selected\" value=\"" . htmlspecialchars($rev['username']) . "\">" . htmlspecialchars($rev['username']) . "</option>";
+                array_push($_SESSION['selectedReviewers_' .$articleId], htmlspecialchars($rev['username']);
 
                 $isSelected = true;
             }
@@ -165,20 +165,20 @@ class UsersAdministrationController extends Controller
             $blockedIcon = "fa-check-circle";
             
         return  "<form method=\"post\">" .
-            "<td>" . $array['username'] . "</td>" .
-            "<td>" . $array['status'] . "</td>" .
-            "<td>" . $array['mail'] . "</td>" .
-            "<td>" . $array['registered']. "</td>" .
-            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"deleteUser_". $array['user_id'] ."\">
+            "<td>" . htmlspecialchars($array['username']) . "</td>" .
+            "<td>" . htmlspecialchars($array['status']) . "</td>" .
+            "<td>" . htmlspecialchars($array['mail']) . "</td>" .
+            "<td>" . htmlspecialchars($array['registered']). "</td>" .
+            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"deleteUser_". htmlspecialchars($array['user_id']) ."\">
                 <i class=\"fa fa-remove  fa-lg \" ></i>
             </button></td>" .
-            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"blockUser_". $array['user_id'] ."\">
+            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"blockUser_". htmlspecialchars($array['user_id']) ."\">
                 <i class=\"fa $blockedIcon fa-lg \" ></i>
             </button></td>" .
-            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"promoteUser_". $array['user_id'] ."\">
+            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"promoteUser_". htmlspecialchars($array['user_id']) ."\">
                 <i class=\"fa fa-arrow-circle-o-up fa-lg \"></i>
             </button></td>" .
-            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"neglectUser_". $array['user_id'] ."\">
+            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"neglectUser_". htmlspecialchars($array['user_id']) ."\">
                 <i class=\"fa fa-arrow-circle-o-down fa-lg \"></i>
             </button></td>" .
             "</form>";

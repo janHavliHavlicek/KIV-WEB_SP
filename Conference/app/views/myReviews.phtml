@@ -6,9 +6,9 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">User info</h4>
-                        <p class="card-text"><strong>Name: </strong><?php echo($user["username"]); ?></p>
-                        <p class="card-text"><strong>E-mail: </strong><?php echo($user["mail"]); ?> </p>
-                        <p class="card-text"><strong>Status: </strong><?php echo($user["status"]);?> </p>
+                        <p class="card-text"><strong>Name: </strong><?php echo(htmlspecialchars($user["username"])); ?></p>
+                        <p class="card-text"><strong>E-mail: </strong><?php echo(htmlspecialchars($user["mail"])); ?> </p>
+                        <p class="card-text"><strong>Status: </strong><?php echo(htmlspecialchars($user["status"]));?> </p>
                     </div>
                 </div>
             </div>
@@ -32,7 +32,7 @@
                 <div class="card">
                     <div class="card-body">
                         <form class="form-horizontal" method="post" enctype="multipart/form-data">
-                            <h3 class="card-title"><?php echo($addTitle); ?></h3>
+                            <h3 class="card-title"><?php echo(htmlspecialchars($addTitle)); ?></h3>
                             <div class="form-group">
                                 <label>Overview rating</label>
                                 <select class="mdb-select colorful-select dropdown-primary"  name="overview">
@@ -70,7 +70,7 @@
                             <div class="form-group basic-textarea">
                                 <label class="control-label">Comment</label>
                                 <div class="">
-                                    <textarea rows="8" name="comment"><?php echo($editReview['comment']); ?></textarea>
+                                    <textarea rows="8" name="comment"><?php echo(htmlspecialchars($editReview['comment'])); ?></textarea>
                                 </div>
                             </div>
                             <div class="form-group text-right">
@@ -86,13 +86,13 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Article</h4>
-                        <p class="card-text"><strong>Title: </strong><?php echo($article["title"]); ?></p>
-                        <p class="card-text"><strong>Author: </strong><?php echo($article["author"]); ?></p>
-                        <p class="card-text"><strong>Status: </strong><?php echo($article["status"]);?> </p>
-                        <p class="card-text"><strong>Added: </strong><?php echo($article["added"]);?> </p>
-                        <p class="card-text"><strong>Modified: </strong><?php echo($article["modified"]);?> </p>
-                        <p class="card-text"><strong>Keywords: </strong><?php echo($article["keywords"]); ?> </p>
-                        <p class="card-text"><strong>Description: </strong><?php echo($article["description"]);?> </p>
+                        <p class="card-text"><strong>Title: </strong><?php echo(htmlspecialchars($article["title"])); ?></p>
+                        <p class="card-text"><strong>Author: </strong><?php echo(htmlspecialchars($article["author"])); ?></p>
+                        <p class="card-text"><strong>Status: </strong><?php echo(htmlspecialchars($article["status"]));?> </p>
+                        <p class="card-text"><strong>Added: </strong><?php echo(htmlspecialchars($article["added"]));?> </p>
+                        <p class="card-text"><strong>Modified: </strong><?php echo(htmlspecialchars($article["modified"]));?> </p>
+                        <p class="card-text"><strong>Keywords: </strong><?php echo(htmlspecialchars($article["keywords"])); ?> </p>
+                        <p class="card-text"><strong>Description: </strong><?php echo(htmlspecialchars($article["description"]));?> </p>
                         <div class="text-center">
                             <?php echo($article["DownloadArticle"]); ?>
                         </div>

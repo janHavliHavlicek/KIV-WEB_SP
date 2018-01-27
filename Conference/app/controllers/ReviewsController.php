@@ -127,12 +127,12 @@ class ReviewsController extends Controller
         $reviewer = $this->users->getUsernameById($array['author']);
 
         $res =  "<form method=\"post\">" .
-            "<td>" . $reviewer . "</td>".
-            "<td>" . $array['overview'] . "</td>" .
-            "<td>" . $array['actuality'] . "</td>" .
-            "<td>" . $array['facts'] . "</td>" .
-            "<td>" . $array['reviewed'] . "</td>".
-            "<td>" . $array['changed'] . "</td>";
+            "<td>" . htmlspecialchars($reviewer) . "</td>".
+            "<td>" . htmlspecialchars($array['overview']) . "</td>" .
+            "<td>" . htmlspecialchars($array['actuality']) . "</td>" .
+            "<td>" . htmlspecialchars($array['facts']) . "</td>" .
+            "<td>" . htmlspecialchars($array['reviewed']) . "</td>".
+            "<td>" . htmlspecialchars($array['changed']) . "</td>";
             $res .= "</form>";
 
         return $res;    

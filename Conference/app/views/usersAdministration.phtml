@@ -6,9 +6,9 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">User info</h4>
-                        <p class="card-text"><strong>Name: </strong><?php echo($user["username"]); ?></p>
-                        <p class="card-text"><strong>E-mail: </strong><?php echo($user["mail"]); ?> </p>
-                        <p class="card-text"><strong>Status: </strong><?php echo($user["status"]);?> </p>
+                        <p class="card-text"><strong>Name: </strong><?php echo(htmlspecialchars($user["username"])); ?></p>
+                        <p class="card-text"><strong>E-mail: </strong><?php echo(htmlspecialchars($user["mail"])); ?> </p>
+                        <p class="card-text"><strong>Status: </strong><?php echo(htmlspecialchars($user["status"]));?> </p>
                     </div>
                 </div>
             </div>

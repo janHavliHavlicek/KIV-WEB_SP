@@ -152,15 +152,15 @@ class MyArticlesController extends Controller
     private function generateTableRow($array)
     {
         return  "<form method=\"post\">" .
-            "<td><button type=\"submit\" class=\"btn btn-teal btn-block px-3\" aria-hidden=\"true\" name=\"downloadArticle_". $array['article_id'] ."\">".$array['title']."</button></td>" .
-            "<td>" . $array['status'] . "</td>" .
-            "<td>" . $array['rating'] . "</td>" .
-            "<td>" . $array['added']. "</td>" .
-            "<td>" . $array['modified']. "</td>" .
-            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"editArticle_". $array['article_id'] ."\">
+            "<td><button type=\"submit\" class=\"btn btn-teal btn-block px-3\" aria-hidden=\"true\" name=\"downloadArticle_". htmlspecialchars($array['article_id']) ."\">".htmlspecialchars($array['title'])."</button></td>" .
+            "<td>" . htmlspecialchars($array['status']) . "</td>" .
+            "<td>" . htmlspecialchars($array['rating']) . "</td>" .
+            "<td>" . htmlspecialchars($array['added']). "</td>" .
+            "<td>" . htmlspecialchars($array['modified']). "</td>" .
+            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"editArticle_". htmlspecialchars($array['article_id']) ."\">
                 <i class=\"fa fa-edit  fa-2x \" ></i>
             </button></td>" .
-            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"deleteArticle_". $array['article_id'] ."\">
+            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"deleteArticle_". htmlspecialchars($array['article_id']) ."\">
                 <i class=\"fa fa-remove  fa-2x \" ></i>
             </button></td>" .
             "</form>";

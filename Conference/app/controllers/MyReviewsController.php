@@ -188,17 +188,17 @@ class MyReviewsController extends Controller
         $author = $this->users->getUsernameById($article['author']);
 
         $res =  "<form method=\"post\">" .
-            "<td>" . "<button type=\"submit\" class=\"btn btn-teal btn-block px-3\" aria-hidden=\"true\" name=\"downloadArticle_". $array['article'] ."\">".
-                $article['title'] ."</button></td>" .
-            "<td>" . $author . "</td>" .
-            "<td>" . $array['overview'] . "</td>" .
-            "<td>" . $array['actuality'] . "</td>" .
-            "<td>" . $array['facts'] . "</td>" .
-            "<td>" . $array['reviewed'] . "</td>".
-            "<td>" . $array['changed'] . "</td>";
+            "<td>" . "<button type=\"submit\" class=\"btn btn-teal btn-block px-3\" aria-hidden=\"true\" name=\"downloadArticle_". htmlspecialchars($array['article']) ."\">".
+                htmlspecialchars($article['title']) ."</button></td>" .
+            "<td>" . htmlspecialchars($author) . "</td>" .
+            "<td>" . htmlspecialchars($array['overview']) . "</td>" .
+            "<td>" . htmlspecialchars($array['actuality']) . "</td>" .
+            "<td>" . htmlspecialchars($array['facts']) . "</td>" .
+            "<td>" . htmlspecialchars($array['reviewed']) . "</td>".
+            "<td>" . htmlspecialchars($array['changed']) . "</td>";
 
         if($article['status'] != 'accepted')
-            $res .= "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"editReview_". $array['review_id'] ."\">
+            $res .= "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"editReview_". htmlspecialchars($array['review_id']) ."\">
                 <i class=\"fa fa-edit  fa-2x \" ></i></button></td>" .
             "</form>";
         else

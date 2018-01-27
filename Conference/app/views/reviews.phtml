@@ -6,13 +6,13 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Article</h4>
-                        <p class="card-text"><strong>Title: </strong><?php echo($article["title"]); ?></p>
-                        <p class="card-text"><strong>Author: </strong><?php echo($article["author"]); ?></p>
-                        <p class="card-text"><strong>Status: </strong><?php echo($article["status"]);?> </p>
-                        <p class="card-text"><strong>Added: </strong><?php echo($article["added"]);?> </p>
-                        <p class="card-text"><strong>Modified: </strong><?php echo($article["modified"]);?> </p>
-                        <p class="card-text"><strong>Keywords: </strong><?php echo($article["keywords"]); ?> </p>
-                        <p class="card-text "><strong>Description: </strong><?php echo($article["description"]);?> </p>
+                        <p class="card-text"><strong>Title: </strong><?php echo(htmlspecialchars($article["title"])); ?></p>
+                        <p class="card-text"><strong>Author: </strong><?php echo(htmlspecialchars($article["author"])); ?></p>
+                        <p class="card-text"><strong>Status: </strong><?php echo(htmlspecialchars($article["status"]));?> </p>
+                        <p class="card-text"><strong>Added: </strong><?php echo(htmlspecialchars($article["added"]));?> </p>
+                        <p class="card-text"><strong>Modified: </strong><?php echo(htmlspecialchars($article["modified"]));?> </p>
+                        <p class="card-text"><strong>Keywords: </strong><?php echo(htmlspecialchars($article["keywords"])); ?> </p>
+                        <p class="card-text "><strong>Description: </strong><?php echo(htmlspecialchars($article["description"]));?> </p>
                         <div class="text-center">
                             <?php echo($article["DownloadArticle"]); ?>
                         </div>
