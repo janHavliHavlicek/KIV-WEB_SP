@@ -103,6 +103,10 @@ class MyArticlesController extends Controller
         {
             $this->editArticleChoosed($articles, $id);
         }
+        if(($id = $this->catchKeywordsId($input, "downloadArticle")) != false)
+        {
+            $this->downloadArticle($this->articles->selectArticle($id)['pdf_url']);
+        }
     }
 
     private function editArticleChoosed($articles, $articleId)
@@ -148,7 +152,7 @@ class MyArticlesController extends Controller
     private function generateTableRow($array)
     {
         return  "<form method=\"post\">" .
-            "<td>" . $array['title'] . "</td>" .
+            "<td><button type=\"submit\" class=\"btn btn-teal btn-block px-3\" aria-hidden=\"true\" name=\"downloadArticle_". $array['article_id'] ."\">".$array['title']."</button></td>" .
             "<td>" . $array['status'] . "</td>" .
             "<td>" . $array['rating'] . "</td>" .
             "<td>" . $array['added']. "</td>" .
@@ -178,6 +182,21 @@ class MyArticlesController extends Controller
             {
                 return false;
             }
+        }
+    }
+    
+    private function downloadArticle($url)
+    {
+        if (file_exists($url)) {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="'.basename($url).'"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($url));
+            readfile($url);
+            exit;
         }
     }
 }

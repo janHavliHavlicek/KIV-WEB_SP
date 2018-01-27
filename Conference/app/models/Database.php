@@ -1,4 +1,4 @@
-<?php 
+<?php
 class Database
 {
     private $host;
@@ -6,173 +6,275 @@ class Database
     const CHARSET = 'utf8';
     const USER = 'root';
     const PASSWORD = '';
+    private $connection;
 
-    private $database;
 
     public function __construct($host, $dbName)
     {
         $this->host = $host;
         $this->dbName = $dbName;
-
-        $this->init();
+        $this->connection = new PDO('mysql:host=' . $this->host . ';dbname=' . $this->dbName . ';charset=' . self::CHARSET, self::USER, self::PASSWORD);
     }
 
-    private function init()
+    public function select($table, $selectColumns, $colWhere, $valWhere, $fetchAll, $not)
     {
-        $this->database = new PDO('mysql:host=' . $this->host . ';dbname=' . $this->dbName . ';charset=' . self::CHARSET, self::USER, self::PASSWORD);
-    }
-
-    public function insert($table, $arrayColumns, $arrayValues)
-    {
-        foreach($arrayValues as &$val)
+        if(!is_array($colWhere))
         {
-            $val = "'" . $val . "'";
+            $colWhere = array($colWhere);
+            $valWhere = array($valWhere);
         }
 
-        $columns = implode(",", $arrayColumns);
-        $values = implode(",", $arrayValues);
+        $mysql_pdo_error = false;
+        $conditions = "";
 
-        $stmt = $this->database->prepare("INSERT INTO " . $table . "(" . $columns . ") VALUES(" . $values . ")");
-
-        $stmt->execute();
-    }
-
-    //BIND!
-    public function select($table, $colWhere, $valWhere, $fetchAll, $not)
-    {
-        //echo "$table";
-        //echo "<pre>". print_r($colWhere, true) . "</pre>";
-        //echo "<pre>". print_r($valWhere, true) . "</pre>";
-
-        if(is_array($colWhere) == true)
+        foreach ($colWhere as $i => $col)
         {
-            foreach($valWhere as &$val)
-            {
-                if(!(strpos($val, 'NULL') !== false))
-                    $val = "'" . $val . "'";
+            // pridat AND
+            if ($conditions != "") $conditions .= "AND ";
+
+            $conditions .= "`$col` = ? ";
+        }
+
+        $query = "SELECT $selectColumns FROM `".$table."` WHERE $not $conditions;";
+        $statement = $this->connection->prepare($query);
+
+        if ($valWhere != null)
+        {
+            foreach ($valWhere as $i => $val)
+            {          
+                $statement->bindValue($i+1, $val);  
             }
+        }
 
-            for($i = 0; $i < count($colWhere); $i++)
-            {
-                if(strpos($valWhere[$i], 'NULL') !== false)
-                    $newValuesArr[$i] = $colWhere[$i] . " IS " . $valWhere[$i];
-                else
-                    $newValuesArr[$i] = $colWhere[$i] . " = " . $valWhere[$i];
-            }
+        $statement->execute();
 
-            $newValues = implode(" AND ", $newValuesArr);
+        $errors = $statement->errorInfo();
 
-            //echo "SELECT * FROM " . $table . " WHERE " . $not . $newValues;
+        if ($errors[0] + 0 > 0)
+        {
+            $mysql_pdo_error = true;
+        }
 
-            $stmt = $this->database->prepare("SELECT * FROM " . $table . " WHERE " . $not . $newValues);
-            $stmt->execute();
+        if ($mysql_pdo_error == false)
+        {
             if($fetchAll)
-                $res = $stmt->fetchAll();
+                $res = $statement->fetchAll(PDO::FETCH_ASSOC);
             else
-                $res = $stmt->fetch();
+                $res = $statement->fetch(PDO::FETCH_ASSOC);
+
+            //echo "<pre></pre><pre>". print_r($valWhere, true)."</pre>";
+            //echo $query;
+            //echo "<pre>" . print_r($res,true) . "</pre>";
+            //exit();
+
+            return $res;
         }
         else
         {
-            $stmt = $this->database->prepare("SELECT * FROM " . $table . " WHERE " . $not . $colWhere . " = '" . $valWhere . "'");
-
-            $stmt->execute();
-
-            if($fetchAll)
-                $res = $stmt->fetchAll();
-            else
-                $res = $stmt->fetch();
+            echo "<pre></pre><pre>". print_r($statement, true)."</pre>";
+            echo "Chyba v dotazu - PDOStatement::errorInfo(): ";
+            print_r($errors);
+            echo "<pre></pre><pre>". print_r($valWhere, true)."</pre>";
+            echo "<pre>SQL dotaz: $query</pre>";
+            //exit();
         }
-
-        return $res;
     }
 
-    public function selectAVG($table, $colWhere, $valWhere, $colAVG)
+
+    public function insert($table, $arrayColumns, $arrayValues)   
     {
-        if(is_array($colWhere) == true)
+        $mysql_pdo_error = false;
+
+        $insert_columns = "";
+        $insert_values  = "";
+
+        if ($arrayColumns != null)
         {
-            foreach($valWhere as &$val)
+            foreach ($arrayColumns as $col)
             {
-                if($val != 'NULL')
-                    $val = "'" . $val . "'";
+                if ($insert_columns != "") $insert_columns .= ", ";
+                if ($insert_columns != "") $insert_values .= ", ";
+                $insert_columns .= "`$col`";
+                $insert_values .= "?";
             }
+        }
 
-            for($i = 0; $i < count($colWhere); $i++)
+        $query = "INSERT INTO `$table` ($insert_columns) VALUES ($insert_values);";
+        $statement = $this->connection->prepare($query);
+
+        if ($arrayValues != null)
+        {
+            foreach ($arrayValues as $i => $val)
             {
-                $newValuesArr[$i] = $colWhere[$i] . " = " . $valWhere[$i];
+                $statement->bindValue($i+1, $val);  
             }
+        }
 
-            $newValues = implode("AND", $newValuesArr);
+        $statement->execute();
+        $errors = $statement->errorInfo();
 
-            $stmt = $this->database->prepare("SELECT AVG(" . $colAVG . ") FROM " . $table . " WHERE " . $newValues);
-
-            $stmt->execute();
-            $res = $stmt->fetch();
+        if ($errors[0] + 0 > 0)
+        {
+            echo "Chyba v dotazu - PDOStatement::errorInfo(): ";
+            printr($errors);
+            echo "SQL dotaz: $query";
+            exit();
         }
         else
         {
-            $stmt = $this->database->prepare("SELECT AVG(" . $colAVG . ") FROM " . $table . " WHERE " . $colWhere . " = '" . $valWhere . "'");
-
-            $stmt->execute();
-            $res = $stmt->fetch();
+            $item_id = $this->connection->lastInsertId();
+            return $item_id;
         }
-
-        return $res;
     }
 
-    /**
-    * Selects desired row from table, find its id column name and id value
-    * and deletes the row from the table given the found id credentials
-    *
-    * @param string $table 
-    * @param string $column
-    * @param string $value
-    */
+    public function update($table, $colWhere, $valWhere, $arrayColumns, $arrayValues)
+    {
+        if(!is_array($colWhere))
+        {
+            $colWhere = array($colWhere);
+            $valWhere = array($valWhere);
+        }
+
+        $mysql_pdo_error = false;
+        $conditions = "";
+        $newValues = "";
+        $valuesToBind = array();
+
+
+        foreach($arrayColumns as $i => $col)
+        {
+            if($newValues != "") $newValues .= ", ";
+
+            $newValues .= "`$col` = ? "; 
+
+            //if(DateTime::createFromFormat('Y-m-d G:i:s', $arrayValues[$i]) !== FALSE)
+            //    $valuesToBind[$i+1] = "CURRENT_TIMESTAMP()";
+            //else
+                $valuesToBind[$i+1] = "$arrayValues[$i]";
+            
+            
+            //echo "<pre>Tady: ". ($i+1). ": " .$arrayValues[$i]." </pre>";
+        }
+        
+        foreach ($colWhere as $i => $col)
+        {
+            if ($conditions != "") $conditions .= "AND ";
+
+            if(strpos($valWhere[$i], 'NULL') !== false)
+                $conditions .= "`$col` IS ? ";
+            else
+                $conditions .= "`$col` = ? ";
+
+                //echo "<pre>Tuuuuuu: ". (count($arrayColumns)+$i+1). ": ".$valWhere[$i] ."</pre>";
+            $valuesToBind[(count($arrayColumns)+$i+1)] = "$valWhere[$i]";
+        }
+
+        $query = "UPDATE `$table` SET $newValues WHERE $conditions;";
+        $statement = $this->connection->prepare($query);
+
+        if ($valuesToBind != null)
+        {
+            foreach ($valuesToBind as $i => $val)
+            {
+                //echo $i . ", ";
+                $res = $statement->bindValue($i, $val);
+            }
+        }
+        
+        //echo $query;
+        //echo "<pre>". $newValues ."<pre>";
+        //echo "<pre>". $conditions ."<pre>";
+        //echo "<pre>LALALA:". print_r($valuesToBind,true) ."<pre>";
+        //exit();
+        
+        $result = $statement->execute();
+        $errors = $statement->errorInfo();
+
+        if(!$result)
+        {
+            //echo "!RESULT</br>";
+            //exit();
+        }
+        
+        if ($errors[0] + 0 > 0)
+        {
+            $mysql_pdo_error = true;
+        }
+
+        if ($mysql_pdo_error == false)
+        {
+            $item_id = $this->connection->lastInsertId();
+            
+            //echo $item_id;
+            //exit();
+            
+            return $item_id;
+        }
+        else
+        {
+            echo "Chyba v dotazu - PDOStatement::errorInfo(): ";
+            print_r($errors);
+            echo "SQL dotaz: $query";
+            exit();
+        }
+    }
+
+
     public function delete($table, $column, $value)
     {
-        $row = $this->select($table, $column, $value, false, '');
+        $row = $this->select($table, "*", $column, $value, false, '');
         $idKey = key($row);
         $id = $row[$idKey];
-            
-        $stmt = $this->database->prepare("DELETE FROM " . $table . " WHERE " . $idKey . " = '" . $id . "'");
 
-        $stmt->execute();
+        $query = "DELETE FROM `".$table."` WHERE `$column` = ?;";
+        $statement = $this->connection->prepare($query);
+
+        $statement->bindValue(1, $value);  
+
+        $statement->execute();
+
+        $errors = $statement->errorInfo();
+
+        if ($errors[0] + 0 > 0)
+        {
+            echo "Chyba v dotazu - PDOStatement::errorInfo(): ";
+            printr($errors);
+            echo "SQL dotaz: $query";
+            //exit();
+        }
+        else
+        {
+            echo $query;
+            //exit();
+        }
     }
 
     public function getTable($table)
     {
-        $stmt = $this->database->prepare("SELECT * FROM " . $table);
+        $mysql_pdo_error = false;
 
-        $stmt->execute();
-        $res = $stmt->fetchAll();
+        $query = "SELECT * FROM `$table`;";
+        $statement = $this->connection->prepare($query);
 
-        return $res;
-    }
+        $statement->execute();
 
-    /*$this->database->update('user', 'username', 'Test', array('status', 'mail'), array('reviewer', 'ahoj@test.cz'));
+        $errors = $statement->errorInfo();
 
-    DevDoc: Problem when inputs are not an arrays!
-    */
-    public function update($table, $colWhere, $valWhere, $arrayColumns, $arrayValues)
-    {
-        foreach($arrayValues as &$val)
+        if ($errors[0] + 0 > 0)
         {
-            if($val != 'NULL')
-                $val = "'" . $val . "'";
+            $mysql_pdo_error = true;
         }
 
-        for($i = 0; $i < count($arrayColumns); $i++)
+        if ($mysql_pdo_error == false)
         {
-            $newValuesArr[$i] = $arrayColumns[$i] . " = " . $arrayValues[$i];
+            $res = $statement->fetchAll(PDO::FETCH_ASSOC);
+            return $res;
         }
-
-        $newValues = implode(",", $newValuesArr);
-
-        //echo "UPDATE " . $table . " SET " . $newValues . " WHERE " . $colWhere . " = '" . $valWhere . "'";
-        //exit();
-        
-        $stmt = $this->database->prepare("UPDATE " . $table . " SET " . $newValues . " WHERE " . $colWhere . " = '" . $valWhere . "'");
-
-        $stmt->execute();
+        else
+        {
+            echo "Chyba v dotazu - PDOStatement::errorInfo(): ";
+            print_r($errors);
+            echo "SQL dotaz: $query";
+        }
     }
 }
-?>

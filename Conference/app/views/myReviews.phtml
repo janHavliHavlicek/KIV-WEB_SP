@@ -4,10 +4,11 @@
         <div class="row">
             <div class="col-lg-3 col-md-12 .mb-4">
                 <div class="card">
-                    <div class="view overlay hm-white-slight">
-                        <h5 class="card-title">Username</h5>   <p><?php echo($user["username"]); ?></p>
-                        <h5 class="card-title">E-mail</h5>     <p><?php echo($user["mail"]); ?> </p>
-                        <h5 class="card-title">Status</h5>     <p><?php echo($user["status"]);?> </p>
+                    <div class="card-body">
+                        <h4 class="card-title">User info</h4>
+                        <p class="card-text"><strong>Name: </strong><?php echo($user["username"]); ?></p>
+                        <p class="card-text"><strong>E-mail: </strong><?php echo($user["mail"]); ?> </p>
+                        <p class="card-text"><strong>Status: </strong><?php echo($user["status"]);?> </p>
                     </div>
                 </div>
             </div>
@@ -27,9 +28,9 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-8 col-md-12 mt-5 .mb-4">
+            <div class="col-lg-7 col-md-12 mt-5 .mb-4">
                 <div class="card">
-                    <div class="view overlay hm-white-slight">
+                    <div class="card-body">
                         <form class="form-horizontal" method="post" enctype="multipart/form-data">
                             <h3 class="card-title"><?php echo($addTitle); ?></h3>
                             <div class="form-group">
@@ -66,14 +67,14 @@
                                 </select>
                             </div>
 
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">Comment</label>
-                                <div class="col-sm-11 col-md-12">
-                                    <textarea class="form-control" rows="8" name="comment"><?php echo($editReview['comment']); ?></textarea>
+                            <div class="form-group basic-textarea">
+                                <label class="control-label">Comment</label>
+                                <div class="">
+                                    <textarea rows="8" name="comment"><?php echo($editReview['comment']); ?></textarea>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div class="col-sm-10 col-sm-offset-2">
+                            <div class="form-group text-right">
+                                <div class="">
                                     <?php echo($addButton); ?>
                                 </div>
                             </div>
@@ -81,18 +82,20 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-12 mt-5 .mb-4">
+            <div class="col-lg-5 col-md-12 mt-5 .mb-4">
                 <div class="card">
-                    <div class="view overlay hm-white-slight">
+                    <div class="card-body">
                         <h4 class="card-title">Article</h4>
-                        <h5 class="card-title">Title</h5>   <p><?php echo($article["title"]); ?></p>
-                        <h5 class="card-title">Author</h5>   <p><?php echo($article["author"]); ?></p>
-                        <h5 class="card-title">Status</h5>     <p><?php echo($article["status"]);?> </p>
-                        <h5 class="card-title">Added</h5>     <p><?php echo($article["added"]);?> </p>
-                        <h5 class="card-title">Modified</h5>     <p><?php echo($article["modified"]);?> </p>
-                        <h5 class="card-title">Keywords</h5>     <p><?php echo($article["keywords"]); ?> </p>
-                        <h5 class="card-title">Description</h5>     <textarea class="form-control" rows="8"><?php echo($article["description"]);?> </textarea>
-                        <?php echo($article["DownloadArticle"]); ?>
+                        <p class="card-text"><strong>Title: </strong><?php echo($article["title"]); ?></p>
+                        <p class="card-text"><strong>Author: </strong><?php echo($article["author"]); ?></p>
+                        <p class="card-text"><strong>Status: </strong><?php echo($article["status"]);?> </p>
+                        <p class="card-text"><strong>Added: </strong><?php echo($article["added"]);?> </p>
+                        <p class="card-text"><strong>Modified: </strong><?php echo($article["modified"]);?> </p>
+                        <p class="card-text"><strong>Keywords: </strong><?php echo($article["keywords"]); ?> </p>
+                        <p class="card-text"><strong>Description: </strong><?php echo($article["description"]);?> </p>
+                        <div class="text-center">
+                            <?php echo($article["DownloadArticle"]); ?>
+                        </div>
                     </div>
                 </div>
             </div>

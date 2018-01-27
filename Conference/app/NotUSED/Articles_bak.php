@@ -31,7 +31,7 @@ class Articles
     
     public function selectArticle($articleId)
     {
-        return $this->database->select('article', "*", 'article_id', $articleId, false, '');
+        return $this->database->select('article', 'article_id', $articleId, false, '');
     }
     
     public function edit($colWhere, $valWhere, $arrayColumns, $arrayValues)
@@ -41,7 +41,7 @@ class Articles
     
     public function getArticlesByAuthor($authorId)
     {
-        $res = $this->database->select("article", "*", "author", $authorId, true, '');
+        $res = $this->database->select("article", "author", $authorId, true, '');
         
         if(empty($res) == true)
         {
@@ -49,7 +49,7 @@ class Articles
         }
         if($this->countdim($res) <= 1)
         {
-            $rating = $this->database->select("review", "AVG(overview)", "article", $res['article_id'], false, '');
+            $rating = $this->database->selectAVG("review", "article", $res['article_id'], "overview");
             
             $res['rating'] = $rating["AVG(overview)"];
             
@@ -59,8 +59,7 @@ class Articles
         {
             for($i = 0; $i < count($res); $i++)
             {
-                $rating = $this->database->select("review", "AVG(overview)", "article", $res[$i]['article_id'], false, '');
-                
+                $rating = $this->database->selectAVG("review", "article", $res[$i]['article_id'], "overview");
                 $res[$i]['rating'] = $rating["AVG(overview)"];
             }
             
@@ -75,14 +74,14 @@ class Articles
     
     public function GetAllNotAccepted()
     {
-        $res = $this->database->select("article", "*", "status", "accepted", true, 'NOT ');
+        $res = $this->database->select("article", "status", "accepted", true, 'NOT ');
         
         for($i = 0; $i < count($res); $i++)
         {
-            $author = $this->database->select("user", "*", "user_id", $res[$i]['author'], false, '')['username'];
+            $author = $this->database->select("user", "user_id", $res[$i]['author'], false, '')['username'];
             $res[$i]['author'] = $author;
             
-            $reviews = $this->database->select("review", "*", "article", $res[$i]["article_id"], true, '');
+            $reviews = $this->database->select("review", "article", $res[$i]["article_id"], true, '');
             $res[$i]['reviews'] = $reviews;
         }
         
@@ -91,15 +90,14 @@ class Articles
     
     public function GetAllAccepted()
     {
-        $res = $this->database->select("article", "*", "status", "accepted", true, '');
+        $res = $this->database->select("article", "status", "accepted", true, '');
         
         for($i = 0; $i < count($res); $i++)
         {
-            $author = $this->database->select("user", 'username', "user_id", $res[$i]['author'], false, '')['username'];
-            
+            $author = $this->database->select("user", "user_id", $res[$i]['author'], false, '')['username'];
             $res[$i]['author'] = $author;
             
-            $reviews = $this->database->select("review", '*', "article", $res[$i]["article_id"], true, '');
+            $reviews = $this->database->select("review", "article", $res[$i]["article_id"], true, '');
             $res[$i]['reviews'] = $reviews;
         }
         

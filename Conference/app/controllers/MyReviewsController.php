@@ -49,8 +49,8 @@ class MyReviewsController extends Controller
         $this->data['editReview']['comment'] = "";
         $this->data['addButton'] = "<input id=\"add\" name=\"add\" type=\"submit\" value=\"Post review\" class=\"btn btn-teal\">";
 
-        $reviewsNew = $reviews->getReviewsBy(array('author', 'overview'), array($user['user_id'], 'NULL'));
-        $reviewsAccepted = $reviews->getReviewsBy(array('author', 'overview'), array($user['user_id'], 'NOT NULL'));
+        $reviewsNew = $reviews->getReviewsBy(array('author', 'wasReviewed'), array($user['user_id'], '0'));
+        $reviewsAccepted = $reviews->getReviewsBy(array('author', 'wasReviewed'), array($user['user_id'], '1'));
 
         //exit();
 
@@ -132,8 +132,8 @@ class MyReviewsController extends Controller
         $this->data['addTitle'] = "Review";
         $this->data['editReview'] = $reviews->selectReview($id);
         $this->data['addButton'] = 
-            "<input id=\"edit\" name=\"edit\" type=\"submit\" value=\"Post review\" class=\"btn btn-teal\">".
-            "<input id=\"cancelEditing\" name=\"cancelEditing\" type=\"submit\" value=\"Cancel\" class=\"btn btn-teal\">";
+            "<input id=\"cancelEditing\" name=\"cancelEditing\" type=\"submit\" value=\"Cancel\" class=\"btn btn-teal\">".
+            "<input id=\"edit\" name=\"edit\" type=\"submit\" value=\"Post review\" class=\"btn btn-teal\">";
 
         $_SESSION['editedReviewId'] = $this->data['editReview']['review_id'];
 
@@ -188,7 +188,7 @@ class MyReviewsController extends Controller
         $author = $this->users->getUsernameById($article['author']);
 
         $res =  "<form method=\"post\">" .
-            "<td>" . "<button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"downloadArticle_". $array['article'] ."\">".
+            "<td>" . "<button type=\"submit\" class=\"btn btn-teal btn-block px-3\" aria-hidden=\"true\" name=\"downloadArticle_". $array['article'] ."\">".
                 $article['title'] ."</button></td>" .
             "<td>" . $author . "</td>" .
             "<td>" . $array['overview'] . "</td>" .
@@ -202,7 +202,7 @@ class MyReviewsController extends Controller
                 <i class=\"fa fa-edit  fa-2x \" ></i></button></td>" .
             "</form>";
         else
-            $res .= "</form>";
+            $res .= "<td></td></form>";
 
         return $res;    
     }

@@ -80,12 +80,12 @@ class HomeController extends Controller
                                 <h4 class=\"card-title\">". $article['title']. "</h4>
                                 <p class=\"card-text\"><strong>Author:</strong> ". $article['author'] ."</p>
                                 <p class=\"card-text\"><strong>Description:</strong>". $article['description'] ."</p>
-                                <form method=\"POST\"><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"downloadArticle_". $article['article_id'] ."\">READ!</button></form>
+                                <form method=\"POST\"><button type=\"submit\" class=\"btn btn-teal btn-block px-3\" aria-hidden=\"true\" name=\"downloadArticle_". $article['article_id'] ."\">READ!</button></form>
                             </div>
                         </div>
                     </div>";
 
-            //echo "NOT EMPTY";
+            //echo "NOT EMPTY";     
         }
 
         return $res;

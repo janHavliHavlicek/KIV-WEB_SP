@@ -4,25 +4,17 @@
         <div class="row">
             <div class="col-lg-3 col-md-12 .mb-4">
                 <div class="card">
-                    <div class="view overlay hm-white-slight">
-                        <h5>Username</h5>   <p><?php echo($user["username"]); ?></p>
-                        <h5>E-mail</h5>     <p><?php echo($user["mail"]); ?> </p>
-                        <h5>Status</h5>     <p><?php echo($user["status"]);?> </p>
+                    <div class="card-body">
+                        <h4 class="card-title">User info</h4>
+                        <p class="card-text"><strong>Name: </strong><?php echo($user["username"]); ?></p>
+                        <p class="card-text"><strong>E-mail: </strong><?php echo($user["mail"]); ?> </p>
+                        <p class="card-text"><strong>Status: </strong><?php echo($user["status"]);?> </p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-9 col-md-12 .mb-4">
                 <div class="card">
-                    <div class="view overlay hm-white-slight">
-                        <?php echo($articles); ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-12 col-md-12 mt-5 .mb-4">
-                <div class="card">
-                    <div class="view overlay hm-white-slight">
+                    <div class="card-body">
                         <form class="form-horizontal" method="post" enctype="multipart/form-data">
                             <h3 class="card-title"><?php echo($addTitle); ?></h3>
                             <div class="form-group">
@@ -50,11 +42,21 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="col-sm-10 col-sm-offset-2">
+                                <div class="text-center">
                                     <?php echo($addButton); ?>
                                 </div>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 mt-5 .mb-4">
+                <div class="card text-center">
+                    <h3 class="card-title pt-3 pb-1">My articles</h3>
+                    <div>
+                        <?php echo($articles); ?>
                     </div>
                 </div>
             </div>

@@ -12,7 +12,5 @@ function validateEmail(email)
     }
 }
 
-function alert()
-{
-        alert("NOT A VALID E-MAIL ADDRESS!");
-}
+
+https://www.itnetwork.cz/javascript/zaklady/javascript-tutorial-dom-a-udalosti

@@ -57,17 +57,17 @@ class UsersAdministrationController extends Controller
         $_SESSION['selectedReviewers_' .$array['article_id']] = array();
 
         $res = "<form method=\"post\">" .
-            "<td>" . "<button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"downloadArticle_". $array['article_id'] ."\">".
-                $array['title'] ."</button></td>" .
+            "<td>" . "<button type=\"submit\" class=\"btn btn-teal btn-block px-3\" aria-hidden=\"true\" name=\"downloadArticle_". $array['article_id'] ."\">".
+            $array['title'] ."</button></td>" .
             "<td>" . $array['author'] . "</td>".
-            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"reviews_". $array['article_id'] ."\">
-                <i class=\"fa fa-comments  fa-2x \" ></i>
-            </button></td>" .
             "<td>" . $array['status'] . "</td>" .
             "<td>" .$this->generateReviewersSelect($array['article_id'], 1, $array['article_id']) . "</td>" .
             "<td>" .$this->generateReviewersSelect($array['article_id'], 2, $array['article_id']) . "</td>" .
             "<td>" .$this->generateReviewersSelect($array['article_id'], 3, $array['article_id']) . "</td>" .
             "<td>" .$this->generateStatusSelect($array) . "</td>" .
+            "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"reviews_". $array['article_id'] ."\">
+                <i class=\"fa fa-comments  fa-2x \" ></i>
+            </button></td>" .
             "<td><button type=\"submit\" class=\"btn btn-teal px-3\" aria-hidden=\"true\" name=\"updateArticle_". $array['article_id'] ."\"> 
                 <i class=\"fa fa-paper-plane-o  fa-2x \" ></i>
             </button></td>" .
@@ -179,6 +179,8 @@ class UsersAdministrationController extends Controller
 
     private function chooseAction($db, $input)
     {
+        
+        
         if(($id = $this->catchKeywordsId($input, "updateArticle", 4)) != false)
         {
             $articles = new Articles($db);
@@ -206,7 +208,7 @@ class UsersAdministrationController extends Controller
             $articles = new Articles($db);
             $this->downloadArticle($articles->selectArticle($id)['pdf_url']);
         }
-        else if(($id = $this->catchKeywordsId($input, "reviews", 0)) != false)
+        else if(($id = $this->catchKeywordsId($input, "reviews", 4)) != false)
         {
             $_SESSION['reviews']['articleId'] = $id;
             $this->route('reviews');
@@ -300,7 +302,7 @@ class UsersAdministrationController extends Controller
 
     private function promote($db, $userId)
     {
-        $user = $db->select("user", "user_id", $userId, false, '');
+        $user = $db->select("user", "*", "user_id", $userId, false, '');
         $toWrite = "author";
         switch ($user['status'])
         {
@@ -320,7 +322,7 @@ class UsersAdministrationController extends Controller
 
     private function neglect($db, $userId)
     {
-        $user = $db->select("user", "user_id", $userId, false, '');
+        $user = $db->select("user", "*", "user_id", $userId, false, '');
         $toWrite = "author";
         switch ($user['status'])
         {
@@ -337,7 +339,7 @@ class UsersAdministrationController extends Controller
 
         $db->update("user", "user_id", $userId, array ('status'), array($toWrite));
     }
-    
+
     private function downloadArticle($url)
     {
         if (file_exists($url)) {

@@ -10,7 +10,7 @@ class Users
     
     public function signIn($username, $password)
     {
-        $user = $this->database->select('user', "*", 'username', $username, false, '');
+        $user = $this->database->select('user', 'username', $username, false, '');
         
         if($user['password'] == md5($password))
         {
@@ -40,12 +40,12 @@ class Users
     
     public function getUsernameById($id)
     {
-        return $this->database->select('user', "*", 'user_id', $id, false, '')['username'];
+        return $this->database->select('user', 'user_id', $id, false, '')['username'];
     }
     
     public function getReviewers()
     {
-        return $this->database->select('user', "*", 'status', 'reviewer', true, '');
+        return $this->database->select('user', 'status', 'reviewer', true, '');
     }
     
     public function getIdsByUsers($input)
@@ -53,7 +53,7 @@ class Users
         $res = array();
         foreach($input as $name)
         {
-            $userId = $this->database->select('user', "*", 'username', $name, false, '')['user_id'];
+            $userId = $this->database->select('user', 'username', $name, false, '')['user_id'];
             
             if($userId != null)
                 array_push($res, $userId);

@@ -17,7 +17,7 @@ class Reviews
 
     public function addOnlyReviewer($article, $author)
     {
-        $authorId = $this->database->select('user', "*", 'username', $author, false, '')['user_id'];
+        $authorId = $this->database->select('user', 'username', $author, false, '')['user_id'];
         $cols = array('article', 'author');
         $vals = array($article, $authorId);
         $this->database->insert('review', $cols, $vals);
@@ -30,7 +30,7 @@ class Reviews
     
     public function getReviewId($article, $author)
     {
-        return $this->database->select('review', "*", array('article', 'author'), array($article, $author), false, '')['review_id'];
+        return $this->database->select('review', array('article', 'author'), array($article, $author), false, '')['review_id'];
     }
 
     public function edit($reviewId, $arrayColumns, $arrayValues)
@@ -40,14 +40,14 @@ class Reviews
 
     public function getReviewsBy($colVal, $searchVal)
     {
-        $res = $this->database->select("review", "*", $colVal, $searchVal, true, '');
+        $res = $this->database->select("review", $colVal, $searchVal, true, '');
 
         return $res;
     }
     
     public function selectReview($id)
     {
-        return $this->database->select('review', "*", 'review_id', $id, false, '');
+        return $this->database->select('review', 'review_id', $id, false, '');
     }
 
     public function delete($reviewId)
@@ -72,7 +72,7 @@ class Reviews
 
     public function isReviewerPresent($reviewer, $actualReviewers)
     {
-        $reviewer = $this->database->select('user', "*", 'username', $reviewer, false, '');
+        $reviewer = $this->database->select('user', 'username', $reviewer, false, '');
 
         if(count($actualReviewers) > 1)
         {
