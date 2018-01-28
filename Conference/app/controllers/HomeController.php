@@ -1,10 +1,26 @@
 <?php
+/**
+ * Controller for "home" page
+ * 
+ * It reads the data (accepted articles) from database
+ * through class @Articles and generates the html code
+ * for its right displaying.
+ * */
 class HomeController extends Controller
 {
+    /**
+     * Articles instance.
+     * 
+     * Serves for accessing the database.
+     * Provides some wrapped functions for simplier use.
+     * */
     private $articles;
-    private $users;
-    private $reviews;
-
+    
+    /**
+     * Stars only the initialization and action choosing.
+     * 
+     * @param array $params input parameters (Not used)
+     * */
     public function process($params)
     {
         $this->header = array('title' => 'Home', 'keywords' => 'MES, home', 'description' => 'Home page of this web');
@@ -15,24 +31,43 @@ class HomeController extends Controller
 
         $this->view = 'home';
     }
-
+    
+    /**
+     * Initializes this class.
+     * 
+     * Creates new instance of Articles.
+     * Generates the articles "grid" html 
+     * */
     private function init()
     {
         $this->articles = new Articles(new Database('localhost', 'Conference'));
 
         $this->data['articles'] = $this->generateArticleGrid($this->articles->GetAllAccepted());
     }
-
-
+    
+    /**
+     * Chooses the right function to call (or action to execute)
+     * according to keyword in $input
+     * 
+     * @param string    $input  The input string which determines the right 
+     *                          action if contains a specific string keyword
+     * */
     private function chooseAction($input)
     {
-            //echo "<pre>". print_r($input) ."</pre>";
         if(($id = $this->catchKeywordsId($input, "downloadArticle")) != false)
         {
             $this->downloadArticle($this->articles->selectArticle($id)['pdf_url']);
         }
     }
-
+    
+    /**
+     * Generates the article grid.
+     * Rows by 3 cards with articles.
+     * 
+     * @param array $articles   Articles to be showed.
+     * 
+     * @return string   html code for showing $articles in rows by 3 on each row
+     * */
     private function generateArticleGrid($articles)
     {
         $res = "";
@@ -47,7 +82,15 @@ class HomeController extends Controller
 
         return $res;
     }
-
+    
+    /**
+     * Generates the row of maximum 3 articles.
+     * 
+     * @param array $articles   Max three articles which cards
+     *                          will be generated.
+     * 
+     * @return string   maximum of three formatted cards in html row
+     * */
     private function generateArticleRow($articles)
     {
 
@@ -57,24 +100,26 @@ class HomeController extends Controller
             $this->generateArticleCard($articles[2]) .
             "</div>";
 
-        //echo "==========================================================";
-        //echo $res;
-        //exit();
-
         return $res;
     }
-
+    
+    /**
+     * Generates the card from input parameter.
+     * Formats the card with mdbootstrap.
+     * 
+     * @param array $article    Infomations about article which card
+     *                          has to be generated
+     * 
+     * $return string   html code of one card for desired article
+     * */
     private function generateArticleCard($article)
     {
-        //echo "<pre>" . print_r($article, TRUE) . "</pre>";
-
         if($article == "")
         {
-            //echo "empty";
-            $res = "";
+            return "";
         }
         else{
-            $res = "<div class=\"col-lg-4 col-md-12 .mb-4\"> 
+            return "<div class=\"col-lg-4 col-md-12 .mb-4\"> 
                         <div class=\"card\">
                             <div class=\"card-body\">
                                 <h4 class=\"card-title\">". htmlspecialchars($article['title']). "</h4>
@@ -83,53 +128,7 @@ class HomeController extends Controller
                                 <form method=\"POST\"><button type=\"submit\" class=\"btn btn-teal btn-block px-3\" aria-hidden=\"true\" name=\"downloadArticle_". htmlspecialchars($article['article_id']) ."\">READ!</button></form>
                             </div>
                         </div>
-                    </div>";
-
-            //echo "NOT EMPTY";     
-        }
-
-        return $res;
-    }
-    
-    private function downloadArticle($url)
-    {
-        if (file_exists($url)) {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="'.basename($url).'"');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($url));
-            readfile($url);
-            exit;
-        }
-    }
-    
-    private function catchKeywordsId($input, $keyword)
-    {
-        if(isset(array_keys($input)[0]))
-        {
-            //echo "<pre>". print_r($input) . "</pre>";
-            //echo $keyword. "====";
-            
-            $callerName = array_keys($input)[0];
-            $pos = strpos($callerName, $keyword);
-
-            //echo $callerName. "====" . $pos . "_________";
-            
-            if($pos !== false)
-            {
-                $id = substr($callerName, strpos($callerName, "_") +1);
-
-                //echo $id;
-                //exit();
-                
-                return $id;
-            }else
-            {
-                return false;
-            }
+                    </div>";   
         }
     }
 }

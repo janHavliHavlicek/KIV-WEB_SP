@@ -1,9 +1,44 @@
 <?php
+/**
+ * Controller for reviews page
+ * 
+ * It reads the data (article credentials and reviews) from database
+ * through class @Articles and @Reviews and generates the html code
+ * for its displaying.
+ * */
 class UsersAdministrationController extends Controller
 {
-    private $usersDb;
+    /**
+     * Articles instance.
+     * 
+     * Serves for accessing the database.
+     * Provides some wrapped functions for simplier use.
+     * */
     private $articles;
+    
+    /**
+     * Reviews instance.
+     * 
+     * Serves for accessing the database.
+     * Provides some wrapped functions for simplier use.
+     * */
     private $reviews;
+    
+    /**
+     * Users instance.
+     * 
+     * Serves for accessing the database.
+     * Provides some wrapped functions for simplier use.
+     * */
+    private $users;
+    
+    /**
+     * Creates new instance of database class,
+     * starts initialization of this class, serves the incoming
+     * user actions over the html forms.
+     * 
+     * @param array $params input parameters (Not used)
+     * */
     public function process($params)
     {
         $db = new Database("localhost", "conference");
@@ -21,6 +56,13 @@ class UsersAdministrationController extends Controller
         $this->view = 'usersAdministration';
     }
 
+    /**
+     * Initializes the data variables of this class for view.
+     * 
+     * Generates the reviews tables of this reviewer (user)
+     * 
+     * @param array   $user        currently logged user
+     * */
     private function init($user)
     {
         $usersArray = $this->usersDb->getAllUsers();
@@ -30,12 +72,24 @@ class UsersAdministrationController extends Controller
         $this->data['user'] = $user;
     }
 
+    /**
+     * Gets all not accepted articles from database
+     * 
+     * Runs the generateTable and then returns the result
+     * */
     private function articlesToReview()
     {
         $reviews = $this->articles->GetAllNotAccepted();
         return $this->generateTable($reviews, 'review');
     }
 
+    /**
+     * Generates the html table for given array
+     * 
+     * @param array  $arrayOfArrays  Array of article arrays
+     * @param string $table          name of table to generate.
+     *                               Allows 2 values - "user" and "review"
+     * */
     private function generateTable($arrayOfArrays, $table)
     {
         $res = "";
@@ -54,6 +108,14 @@ class UsersAdministrationController extends Controller
         return $res;
     }
 
+    /**
+     * Generates the Review table row from given $array data
+     * Generates also buttons for given rows
+     * 
+     * @param array $array articles infromation array - review data and article data
+     * 
+     * @return the generated html for table row
+     * */
     private function generateReviewTableRow($array)
     {
         $_SESSION['selectedReviewers_' .$array['article_id']] = array();
@@ -77,6 +139,14 @@ class UsersAdministrationController extends Controller
         return $res;
     }
 
+    /**
+     * Generates the select html object for choosing a status
+     * of article.
+     * 
+     * @param array $rev    array of review information
+     * 
+     * @return string       html code for select
+     * */
     private function generateStatusSelect($rev)
     {
         $res = "<select name=\"selectStatus_" . $rev['article_id'] . "\" class=\"mdb-select colorful-select dropdown-primary\">";
@@ -111,6 +181,18 @@ class UsersAdministrationController extends Controller
         return $res . "</select>";
     }
 
+    /**
+     * Generates the select html object for choosing a reviewer
+     * of article. It has to choose which reviewer is assigned to this article
+     * It has to enerate the name for selection (with order and review ID)
+     * 
+     * @param string    $revNum     id of review from database
+     * @param int       $order      order of select (allowed values 1-3)
+     * @param string    $articleId  id of article to be reviewed - 
+     *                              specifies the group of reviewers already selected
+     * 
+     * @return string       html code for select
+     * */
     private function generateReviewersSelect($revNum, $order, $articleId)
     {
         if(!isset($_SESSION['selectedReviewers_' .$articleId]))
@@ -121,17 +203,13 @@ class UsersAdministrationController extends Controller
         $reviewers = $this->usersDb->getReviewers();
         $res = "<select name=\"select_" . $revNum . "_" . $order . "\" class=\"mdb-select colorful-select dropdown-primary\">" . "<option value=\"Choose a Reviewer\">Choose a Reviewer</option>";
 
-        //echo '<pre>' .print_r($reviewers, TRUE).'</pre>';
-
         foreach($reviewers as $rev)
         {
-            //echo '<pre>' .print_r($rev, TRUE).'-----------</pre>';
             if($this->isReviewerSelectedAlready($articleId, htmlspecialchars($rev['username'])) == true || $this->reviews->isReviewerAssignet(htmlspecialchars($rev['user_id']), $articleId) == false || $isSelected == true)
             {
                 $res .= "<option value=\"" . htmlspecialchars($rev['username']) . "\">" . htmlspecialchars($rev['username']) . "</option>";
             }else
             {       
-                //echo '<pre> hahaha' .print_r($rev, TRUE).'</pre>';
                 $res .= "<option selected=\"selected\" value=\"" . htmlspecialchars($rev['username']) . "\">" . htmlspecialchars($rev['username']) . "</option>";
                 array_push($_SESSION['selectedReviewers_' .$articleId], htmlspecialchars($rev['username']));
 
@@ -142,11 +220,14 @@ class UsersAdministrationController extends Controller
         return $res . "</select>";
     }
 
+    /**
+     * Determines if this reviewer is already shown as selected
+     * 
+     * @param string    $articleId      ID of article of selected reviewers
+     * @param string    $reveiwerName   Name of the reviewer needs to be selected
+     * */
     private function isReviewerSelectedAlready($articleId, $reviewerName)
     {
-        //echo '<pre>'. print_r('selectedReviewers_' .$articleId, TRUE) .'</pre>';
-        //echo '<pre>'. print_r($_SESSION['selectedReviewers_' .$articleId], TRUE) .'</pre>';
-        //echo '<pre>'. print_r($reviewerName, TRUE) .'***********************************************</pre>';
         foreach($_SESSION['selectedReviewers_' .$articleId] as $rev)
         {
             if(in_array($reviewerName, $_SESSION['selectedReviewers_' .$articleId]))
@@ -157,6 +238,12 @@ class UsersAdministrationController extends Controller
         return false;
     }
 
+    /**
+     * Generates the specific table row from given $array data
+     * Generates also buttons for given rows
+     * 
+     * @param array $array  Reviews array - review data for showing.
+     * */
     private function generateUserTableRow($array)
     {
         if($array['blocked'] == 0)
@@ -184,6 +271,13 @@ class UsersAdministrationController extends Controller
             "</form>";
     }
 
+    /**
+     * Chooses the right function to call (or action to execute)
+     * according to keyword in $input
+     * 
+     * @param string    $input  The input string which determines the right 
+     *                          action if contains a specific string keyword
+     * */
     private function chooseAction($db, $input)
     {
         
@@ -224,13 +318,20 @@ class UsersAdministrationController extends Controller
         }
     }
 
+    /**
+     * Reaction to update Article button.
+     * 
+     * It adds all the new or changed reviewers to given article.
+     * 
+     * @param string    $articleId      ID of article to be changed/updated
+     * @param string    $reviewer1      Name of reviewer 1 (of 3)
+     * @param string    $reviewer2      Name of reviewer 2 (of 3)      
+     * @param string    $reviewer3      Name of reviewer 3 (of 3)
+     * @param string    $newStatus      New status to be changed
+     * */
     private function updateArticle($articleId, $reviewer1, $reviewer2, $reviewer3, $newStatus)
     {
-        //echo '<pre>'. "$articleId, $reviewer1, $reviewer2, $reviewer3, $newStatus" .'________________</pre>';
-
         $actualReviews = $this->reviews->getReviewsBy('article', $articleId);
-
-        //echo '<pre>'. print_r($actualReviewers, TRUE) .'</pre>';
 
         if(empty($reviewer1) == false)
         {
@@ -250,6 +351,17 @@ class UsersAdministrationController extends Controller
         }
     }
 
+    /**
+     * Reaction to addReviewer
+     * 
+     * It adds new review into database with given $reviewer
+     * 
+     * @param string    $articleId      ID of article to be changed/updated
+     * @param string    $reviewer       Name of reviewer to be added
+     * @param string    $reviewer2      Name of reviewer 2 (of 3)      
+     * @param string    $reviewer3      Name of reviewer 3 (of 3)
+     * @param array     $actualReviews  array of actually active reviews for this article_id
+     * */
     private function addReviewer($reviewer, $reviewer2, $reviewer3, $actualReviews, $articleId)
     {
         $reviews = $this->reviews;
@@ -288,40 +400,6 @@ class UsersAdministrationController extends Controller
                     }
                 }
             }
-        }
-    }
-
-    private function catchKeywordsId($input, $keyword, $index)
-    {
-        if(isset(array_keys($input)[$index]))
-        {
-            $callerName = array_keys($input)[$index];
-            $pos = strpos($callerName, $keyword);
-
-            if($pos !== false)
-            {
-                $id = substr($callerName, strpos($callerName, "_") +1);
-
-                return $id;
-            }else
-            {
-                return false;
-            }
-        }
-    }
-
-    private function downloadArticle($url)
-    {
-        if (file_exists($url)) {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="'.basename($url).'"');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($url));
-            readfile($url);
-            exit;
         }
     }
 }

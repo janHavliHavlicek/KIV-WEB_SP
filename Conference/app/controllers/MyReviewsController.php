@@ -1,9 +1,43 @@
 <?php
+/**
+ * This class serves for interaction with myReviews view.
+ * 
+ * It is the page where reviewers can add, edit, delete and overview all
+ * their reviews.
+ * */
 class MyReviewsController extends Controller
 {
+    /**
+     * Articles instance.
+     * 
+     * Serves for accessing the database.
+     * Provides some wrapped functions for simplier use.
+     * */
     private $articles;
+    
+    /**
+     * Reviews instance.
+     * 
+     * Serves for accessing the database.
+     * Provides some wrapped functions for simplier use.
+     * */
     private $reviews;
+    
+    /**
+     * Users instance.
+     * 
+     * Serves for accessing the database.
+     * Provides some wrapped functions for simplier use.
+     * */
     private $users;
+    
+    /**
+     * Creates new instance of database class,
+     * starts initialization of this class, serves the incoming
+     * user actions over the html forms.
+     * 
+     * @param array $params input parameters (Not used)
+     * */
     public function process($params)
     {
         if(!isset($_SESSION['logged_user']))
@@ -29,6 +63,14 @@ class MyReviewsController extends Controller
         }
     }
 
+    /**
+     * Initializes the data variables of this class for view.
+     * 
+     * Generates the reviews tables of this reviewer (user)
+     * 
+     * @param Reviews   $reviews   database wrapper instance
+     * @param array     $user       currently logged user 
+     * */
     private function init($reviews, $user)
     {
         $this->data['reviewsAccepted'] = "";
@@ -52,8 +94,6 @@ class MyReviewsController extends Controller
         $reviewsNew = $reviews->getReviewsBy(array('author', 'wasReviewed'), array($user['user_id'], '0'));
         $reviewsAccepted = $reviews->getReviewsBy(array('author', 'wasReviewed'), array($user['user_id'], '1'));
 
-        //exit();
-
         if(empty($reviewsNew) == false )
         {
             $this->data['reviewsNew'] = $this->generateTable($reviewsNew, true);
@@ -73,23 +113,30 @@ class MyReviewsController extends Controller
 
     }
 
+    /**
+     * Edits the review in database.
+     * 
+     * @param Reviews   $reviews    database wrapper instance
+     * @param array     $input      form type post data. User input.
+     * */
     private function editReview($reviews, $input)
     {
         $reviews->edit($_SESSION['editedReviewId'], array('overview', 'actuality', 'facts', 'comment', 'changed'),
                        array($input['overview'], $input['actuality'], $input['facts'], $input['comment'], date('Y-m-d G:i:s')));
     }
 
+    /**
+     * Chooses the right function to call (or action to execute)
+     * according to keyword in $input
+     * 
+     * @param string    $input  The input string which determines the right 
+     *                          action if contains a specific string keyword
+     * */
     private function chooseAction($input)
     {
-        //echo '<pre>' . print_r($input, true) . '</pre>';
-        //exit();
-
         if(isset($input["download"]))
         {
-            //echo '<pre>' . print_r($input, true) . '</pre>';
-            //echo $_SESSION['actualArticleUrl'];
             $this->downloadArticle($_SESSION['actualArticleUrl']);
-            //exit();
         }
         if(isset($input["edit"]) || isset($input["add"]))
         {
@@ -108,25 +155,15 @@ class MyReviewsController extends Controller
         {
             $this->downloadArticle($this->articles->selectArticle($id)['pdf_url']);
         }
-
-        //exit();
     }
 
-    private function downloadArticle($url)
-    {
-        if (file_exists($url)) {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="'.basename($url).'"');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($url));
-            readfile($url);
-            exit;
-        }
-    }
-
+    /**
+     * Reaction on editation of review. Not "send to db", but "edit".
+     * Delivers correct values into add form and changes it into edit form.
+     * 
+     * @param Reviews   $reviews    database wrapper instance
+     * @param string    $id         id of given review
+     * */
     private function editArticleChoosed($reviews, $id)
     {
         $this->data['addTitle'] = "Review";
@@ -145,6 +182,14 @@ class MyReviewsController extends Controller
         $_SESSION['actualArticleUrl'] = $article['pdf_url'];
     }
 
+    /**
+     * Generates the html table for given array of reviews
+     * 
+     * @param array $arrayOfArrays  Array of article arrays
+     * @param bool  $newReviews     Says if the table will be of newReviews
+     *                              (not reveiwed yet by this reviewer) or not.
+     *                              These two tables has different content
+     * */
     private function generateTable($arrayOfArrays, $newReviews)
     {
         $res = "<table class=\"table table-striped table-hover\">
@@ -182,6 +227,12 @@ class MyReviewsController extends Controller
         return $res;
     }
 
+    /**
+     * Generates the specific table row from given $array data
+     * Generates also buttons for given rows
+     * 
+     * @param array $array  Reviews array - review data for showing.
+     * */
     private function generateTableRow($array)
     {
         $article = $this->articles->selectArticle($array['article']);
@@ -205,25 +256,6 @@ class MyReviewsController extends Controller
             $res .= "<td></td></form>";
 
         return $res;    
-    }
-
-    private function catchKeywordsId($input, $keyword)
-    {
-        if(isset(array_keys($input)[0]))
-        {
-            $callerName = array_keys($input)[0];
-            $pos = strpos($callerName, $keyword);
-
-            if($pos !== false)
-            {
-                $id = substr($callerName, strpos($callerName, "_") +1);
-
-                return $id;
-            }else
-            {
-                return false;
-            }
-        }
     }
 }
 ?>

@@ -1,6 +1,19 @@
 <?php
+/**
+ * Controller for user page
+ * 
+ * It chooses the right page to show according to users status (permissions/role)
+ * */
 class UserController extends Controller
 {
+    
+    /**
+     * Calls the route function if user is not logged.
+     * 
+     * Stars the initialization of this class when the user is logged.
+     * 
+     * @param array $params input parameters (Not used)
+     * */
     public function process($params)
     {
         if(!isset($_SESSION['logged_user']))
@@ -13,6 +26,12 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * Re-routes the user to correct page
+     * according to given users status (permissions/role)
+     * 
+     * @param array $user   array of users information
+     * */
     private function init($user)
     {
         switch($user['status'])

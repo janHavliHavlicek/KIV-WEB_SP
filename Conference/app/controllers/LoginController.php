@@ -1,6 +1,18 @@
 <?php
+
+/**
+ * Controller logic for loggin in.
+ * 
+ * Only processes the login form. Nothing more.
+ * */
 class LoginController extends Controller
 {
+    /**
+     * Processes the login form when submitted.
+     * It can "log in" the user into $_SESSION variable.
+     * 
+     * @param array $params input parameters (Not used)
+     * */
     public function process($params)
     {
         $this->header = array('title' => 'Login', 'keywords' => 'login', 'description' => 'Login or sign up for this website');

@@ -1,13 +1,25 @@
 <?php
+/**
+ * This class serves for interaction with myArticles view.
+ * 
+ * It is the page where authors can add, edit, delete and overview all
+ * their articles.
+ * */
 class MyArticlesController extends Controller
 {
+    /**
+     * Creates new instance of database class,
+     * starts initialization of this class, serves the incoming
+     * user actions over the html forms.
+     * 
+     * @param array $params input parameters (Not used)
+     * */
     public function process($params)
     {
         $db = new Database("localhost", "Conference");
         $articles = new Articles($db);
-        $reviews = new Reviews($db);
 
-        $this->init($articles, $reviews, $_SESSION['logged_user']);
+        $this->init($articles, $_SESSION['logged_user']);
 
         $this->chooseAction($articles, $_POST);
 
@@ -16,7 +28,15 @@ class MyArticlesController extends Controller
         $this->view = 'myArticles';
     }
 
-    private function init($articles, $reviews, $user)
+    /**
+     * Initializes the data variables of this class for view.
+     * 
+     * Generates the articles table of this user.
+     * 
+     * @param Articles  $articles   database wrapper instance
+     * @param array     $user       currently logged user 
+     * */
+    private function init($articles, $user)
     {
         $this->data['articles'] = "";
         $this->data['user'] = $user;
@@ -38,12 +58,24 @@ class MyArticlesController extends Controller
         }
     }
 
+    /**
+     * Adds an article into database.
+     * 
+     * @param Articles  $articles   database wrapper instance
+     * @param array     $input      form type post data. User input.
+     * */
     private function addArticle($articles, $input)
     {
         $url = $this->uploadPdf();
         $articles->add($_SESSION['logged_user']['user_id'], $input['title'], $input['description'], $input['keywords'], $url);
     }
 
+    /**
+     * Edits the article in database.
+     * 
+     * @param Articles  $articles   database wrapper instance
+     * @param array     $input      form type post data. User input.
+     * */
     private function editArticle($articles, $input)
     {
         $url = $this->uploadPdf();
@@ -57,6 +89,12 @@ class MyArticlesController extends Controller
         }
     }
 
+    /**
+     * Uploads selected .pdf onto server FTP.
+     * 
+     * Gets the image - adds the user_id into its name (prefix)
+     * and then uploads it onto FTP (overwrites existing)
+     * */
     private function uploadPdf()
     {
         $directory = $_SERVER['DOCUMENT_ROOT']."/articles_pdf/";
@@ -65,8 +103,6 @@ class MyArticlesController extends Controller
 
         $imageFileType = strtolower(pathinfo($file, PATHINFO_EXTENSION));
 
-        //echo $file;
-        //exit();
         if($imageFileType == "pdf")
         {
             move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $file);
@@ -78,6 +114,14 @@ class MyArticlesController extends Controller
         }
     }
 
+     /**
+     * Chooses the right function to call (or action to execute)
+     * according to keyword in $input
+     * 
+     * @param Articles  $articles   database wrapper instance
+     * @param string    $input  The input string which determines the right 
+     *                          action if contains a specific string keyword
+     * */
     private function chooseAction($articles, $input)
     {
         if(isset($input["add"]))
@@ -109,6 +153,13 @@ class MyArticlesController extends Controller
         }
     }
 
+    /**
+     * Reaction on editation of article. Not "send to db", but "edit".
+     * Delivers correct values into add form and changes it into edit form.
+     * 
+     * @param Articles  $articles   database wrapper instance
+     * @param string    $articleId  id of given article
+     * */
     private function editArticleChoosed($articles, $articleId)
     {
         $this->data['addTitle'] = "Edit article";
@@ -120,6 +171,11 @@ class MyArticlesController extends Controller
         $_SESSION['editedArticleId'] = $this->data['editArticle']['article_id'];
     }
 
+    /**
+     * Generates the html table for given array of Articles
+     * 
+     * @param array $arrayOfArrays  Array of article arrays
+     * */
     private function generateTable($arrayOfArrays)
     {
         $res = "<table class=\"table table-striped table-hover\">
@@ -149,6 +205,12 @@ class MyArticlesController extends Controller
         return $res;
     }
 
+    /**
+     * Generates the specific table row from given $array data
+     * Generates also buttons for given rows (edit/delete/download article)
+     * 
+     * @param array $array  Article array - article datas for showing.
+     * */
     private function generateTableRow($array)
     {
         return  "<form method=\"post\">" .
@@ -164,40 +226,6 @@ class MyArticlesController extends Controller
                 <i class=\"fa fa-remove  fa-2x \" ></i>
             </button></td>" .
             "</form>";
-    }
-
-    private function catchKeywordsId($input, $keyword)
-    {
-        if(isset(array_keys($input)[0]))
-        {
-            $callerName = array_keys($input)[0];
-            $pos = strpos($callerName, $keyword);
-
-            if($pos !== false)
-            {
-                $id = substr($callerName, strpos($callerName, "_") +1);
-
-                return $id;
-            }else
-            {
-                return false;
-            }
-        }
-    }
-    
-    private function downloadArticle($url)
-    {
-        if (file_exists($url)) {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="'.basename($url).'"');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($url));
-            readfile($url);
-            exit;
-        }
     }
 }
 ?>

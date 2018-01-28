@@ -1,8 +1,26 @@
 <?php
+/**
+ * This class provides the routing of this web-application
+ * 
+ * It adheres the MVC architecture. It parses the URL into "pretty" ones.
+ * It connects the Controllers with Views.
+ * It handles the signOff situation.
+ */
 class RouterController extends Controller
 {
+    /**
+     * Inherited Controller instance.
+     * Used for routing onto the right urls.
+     * */
     protected $controller;
     
+    /**
+     * This method determines what to do when loading the RouterController
+     * It parses the URL, takes care of right processing the addresses and
+     * showing the right view with the right Controller.
+     * 
+     * @param array $params parameters as input values, conditions, etc.
+     */
     public function process($params)
     {
         $parsedURL = $this->parseURL($params[0]);
@@ -28,6 +46,11 @@ class RouterController extends Controller
         $this->view = 'layout';
     }
     
+    /**
+     * Signs off currently signed user.
+     *
+     * It destroys its session and re-routes user onto home page.
+     * */
     private function signOff($input)
     {
         if($this->isKeyword($input, "signOff"))
@@ -37,22 +60,10 @@ class RouterController extends Controller
         }
     }
     
-    private function isKeyword($input, $keyword)
-    {
-        if(isset(array_keys($input)[0]))
-        {
-            $callerName = array_keys($input)[0];
-            
-            if($callerName == $keyword)
-            {
-                return true;
-            }else
-            {
-                return false;
-            }
-        }
-    }
-    
+    /**
+     * This function parses given URL
+     * into the pretty one.
+     * */
     private function parseURL($url)
     {
         $res = parse_url($url);
