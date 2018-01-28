@@ -20,6 +20,8 @@ class LoginController extends Controller
             {
                 $_SESSION["logged_user"] = null;
                 $_SESSION["logged_user"]["username"] = 'Log in...';
+                
+                //$this->alert("Wrong password inserted...");
                 $this->view = 'login';
             }
 

@@ -116,9 +116,9 @@ class Database
         if ($errors[0] + 0 > 0)
         {
             echo "Chyba v dotazu - PDOStatement::errorInfo(): ";
-            printr($errors);
+            print_r($errors);
             echo "SQL dotaz: $query";
-            exit();
+            //exit();
         }
         else
         {

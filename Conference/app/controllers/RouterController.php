@@ -18,7 +18,7 @@ class RouterController extends Controller
         else
             $this->route('error');
         
-        $this->controller->process($parsedURL);
+        $this->controller->process($params[0]);
         
         $this->signOff($_POST);
         

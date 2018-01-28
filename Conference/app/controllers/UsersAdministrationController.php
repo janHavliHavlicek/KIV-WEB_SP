@@ -126,14 +126,14 @@ class UsersAdministrationController extends Controller
         foreach($reviewers as $rev)
         {
             //echo '<pre>' .print_r($rev, TRUE).'-----------</pre>';
-            if($this->isReviewerSelectedAlready($articleId, htmlspecialchars($rev['username']) == true || $this->reviews->isReviewerAssignet(htmlspecialchars($rev['user_id']), $articleId) == false || $isSelected == true)
+            if($this->isReviewerSelectedAlready($articleId, htmlspecialchars($rev['username'])) == true || $this->reviews->isReviewerAssignet(htmlspecialchars($rev['user_id']), $articleId) == false || $isSelected == true)
             {
                 $res .= "<option value=\"" . htmlspecialchars($rev['username']) . "\">" . htmlspecialchars($rev['username']) . "</option>";
             }else
             {       
                 //echo '<pre> hahaha' .print_r($rev, TRUE).'</pre>';
                 $res .= "<option selected=\"selected\" value=\"" . htmlspecialchars($rev['username']) . "\">" . htmlspecialchars($rev['username']) . "</option>";
-                array_push($_SESSION['selectedReviewers_' .$articleId], htmlspecialchars($rev['username']);
+                array_push($_SESSION['selectedReviewers_' .$articleId], htmlspecialchars($rev['username']));
 
                 $isSelected = true;
             }
