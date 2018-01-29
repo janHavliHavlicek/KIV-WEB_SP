@@ -147,11 +147,11 @@ class MyReviewsController extends Controller
         {
             $this->route('user');
         }
-        if(($id = $this->catchKeywordsId($input, "editReview")) != false)
+        if(($id = $this->catchKeywordsId($input, "editReview", 0)) != false)
         {
             $this->editArticleChoosed($this->reviews, $id);
         }
-        if(($id = $this->catchKeywordsId($input, "downloadArticle")) != false)
+        if(($id = $this->catchKeywordsId($input, "downloadArticle", 0)) != false)
         {
             $this->downloadArticle($this->articles->selectArticle($id)['pdf_url']);
         }

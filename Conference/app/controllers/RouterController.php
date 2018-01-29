@@ -36,7 +36,7 @@ class RouterController extends Controller
         else
             $this->route('error');
         
-        $this->controller->process($params[0]);
+        $this->controller->process($parsedURL);
         
         $this->signOff($_POST);
         
@@ -53,7 +53,7 @@ class RouterController extends Controller
      * */
     private function signOff($input)
     {
-        if($this->isKeyword($input, "signOff"))
+        if($this->catchKeywordsId($input, "signOff", 0))
         {
             session_destroy();
             $this->route('home');

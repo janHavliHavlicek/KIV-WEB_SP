@@ -138,18 +138,18 @@ class MyArticlesController extends Controller
         {
             $this->route('user');
         }
-        if(($id = $this->catchKeywordsId($input, "deleteArticle")) != false)
+        if(($id = $this->catchKeywordsId($input, "deleteArticle", 0)) != false)
         {
             $articles->delete($id);
             $this->route('user');
         }
-        if(($id = $this->catchKeywordsId($input, "editArticle")) != false)
+        if(($id = $this->catchKeywordsId($input, "editArticle", 0)) != false)
         {
             $this->editArticleChoosed($articles, $id);
         }
-        if(($id = $this->catchKeywordsId($input, "downloadArticle")) != false)
+        if(($id = $this->catchKeywordsId($input, "downloadArticle", 0)) != false)
         {
-            $this->downloadArticle($this->articles->selectArticle($id)['pdf_url']);
+            $this->downloadArticle($articles->selectArticle($id)['pdf_url']);
         }
     }
 

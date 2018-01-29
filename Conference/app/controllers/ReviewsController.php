@@ -111,7 +111,7 @@ class ReviewsController extends Controller
         {
             $this->downloadArticle($_SESSION['actualArticleUrl']);
         }
-        if(($id = $this->catchKeywordsId($input, "downloadArticle")) != false)
+        if(($id = $this->catchKeywordsId($input, "downloadArticle", 0)) != false)
         {
             $this->downloadArticle($this->articles->selectArticle($id)['pdf_url']);
         }

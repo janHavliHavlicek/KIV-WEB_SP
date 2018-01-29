@@ -119,7 +119,7 @@ class UsersAdministrationController extends Controller
     private function generateReviewTableRow($array)
     {
         $_SESSION['selectedReviewers_' .$array['article_id']] = array();
-
+        
         $res = "<form method=\"post\">" .
             "<td>" . "<button type=\"submit\" class=\"btn btn-teal btn-block px-3\" aria-hidden=\"true\" name=\"downloadArticle_". htmlspecialchars($array['article_id']) ."\">".
             htmlspecialchars($array['title']) ."</button></td>" .
@@ -280,7 +280,8 @@ class UsersAdministrationController extends Controller
      * */
     private function chooseAction($db, $input)
     {
-        
+        //echo "<pre>". print_r($input, true) . "</pre>";
+        //exit();
         
         if(($id = $this->catchKeywordsId($input, "updateArticle", 4)) != false)
         {

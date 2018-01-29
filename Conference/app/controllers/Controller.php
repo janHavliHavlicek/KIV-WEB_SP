@@ -79,11 +79,11 @@ abstract class Controller
      *                              then returns the correct $id. Otherwise,
      *                              returns false.
      * */
-    public function catchKeywordsId($input, $keyword)
+    public function catchKeywordsId($input, $keyword, $index)
     {
-        if(isset(array_keys($input)[0]))
+        if(isset(array_keys($input)[$index]))
         {   
-            $callerName = array_keys($input)[0];
+            $callerName = array_keys($input)[$index];
             $pos = strpos($callerName, $keyword);
             
             if($pos !== false)

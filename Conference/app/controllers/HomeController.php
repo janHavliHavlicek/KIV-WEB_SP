@@ -54,7 +54,7 @@ class HomeController extends Controller
      * */
     private function chooseAction($input)
     {
-        if(($id = $this->catchKeywordsId($input, "downloadArticle")) != false)
+        if(($id = $this->catchKeywordsId($input, "downloadArticle", 0)) != false)
         {
             $this->downloadArticle($this->articles->selectArticle($id)['pdf_url']);
         }
